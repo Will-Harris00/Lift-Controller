@@ -1,46 +1,38 @@
-from tkinter import *
-root = Tk()
+import tkinter as tk
 
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
+class App(tk.Tk):
+    def __init__(self, *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+        self.canvas = tk.Canvas(self, width=500, height=500, borderwidth=0, highlightthickness=0)
+        self.canvas.pack(side="top", fill="both", expand="true")
+        self.rows = 12
+        self.columns = 12
+        self.tiles = {}
+        self.canvas.bind("<Configure>", self.redraw)
+        self.status = tk.Label(self, anchor="w")
+        self.status.pack(side="bottom", fill="x")
 
-column_size = str(screen_width//2)
-print(column_size)
-lift_1=Label(root, bg="lightblue")
-lift_2=Label(root, bg="lightpink")
+    def redraw(self, event=None):
+        self.canvas.delete("rect")
+        cellwidth = int(self.canvas.winfo_width()/self.columns)
+        cellheight = int(self.canvas.winfo_height()/self.columns)
+        for column in range(self.columns):
+            for row in range(self.rows):
+                x1 = column*cellwidth
+                y1 = row * cellheight
+                x2 = x1 + cellwidth
+                y2 = y1 + cellheight
+                tile = self.canvas.create_rectangle(x1,y1,x2,y2, fill="blue", tags="rect")
+                self.tiles[row,column] = tile
+                self.canvas.tag_bind(tile, "<1>", lambda event, row=row, column=column: self.clicked(row, column))
 
-lift_1.grid(row=0, column=0)
-lift_2.grid(row=0, column=1)
-root.mainloop()
-"""
+    def clicked(self, row, column):
+        tile = self.tiles[row,column]
+        tile_color = self.canvas.itemcget(tile, "fill")
+        new_color = "blue" if  tile_color == "red" else "red"
+        self.canvas.itemconfigure(tile, fill=new_color)
+        self.status.configure(text="you clicked on %s/%s" % (row, column))
 
-left = 0
-top = 3
-bottom = height
-right = width
-
-# determines the size of the lift based on the number of
-# lifts that can fit in the animation window.
-length = 25
-# coordinate system [left x1, top y1, right x2, bottom y2]
-
-canvas = Canvas(root, height=height, width=width, bg="lightblue")
-canvas.pack()
-
-shaft = canvas.create_rectangle(49, top, 76, bottom, fill="white", outline='black', width="1")
-lift = canvas.create_rectangle(50, top, 75, (top+length), fill="white", outline='grey')
-xspeed = 0
-yspeed = 1
-
-while True:
-    canvas.move(lift, xspeed, yspeed)
-    position = canvas.coords(lift)
-
-    root.update()
-    time.sleep(0.02)
-    if position[3]>=bottom:
-        yspeed = -yspeed
-    elif position[1]==top:
-        yspeed = -yspeed
-"""
-
+if __name__ == "__main__":
+    app = App()
+    app.mainloop()
