@@ -3,6 +3,7 @@ from tkinter import messagebox
 import random
 class Window(root.Tk):
     def __init__(self, *args, **kwargs):
+        self.iterations = 10
         self.num_floors = 10
         self.top_floor = self.num_floors - 1
         self.num_lifts = 1
@@ -16,6 +17,7 @@ class Window(root.Tk):
         self.canvas.bind("<Configure>", self.redraw)
         self.status = root.Label(self, anchor="w")
         self.status.pack(side="bottom", fill="x")
+        self.status.configure(text="Iterations: %s" % (self.iterations))
         self.running = False
         self.position = 0
 
@@ -50,7 +52,25 @@ class Window(root.Tk):
                         self.canvas.create_text(x2, y2, text=str(floor_num), tags="flrs",
                                                 font=('Arial', -round(cellheight // 1.75)))
                     floor_num += 1
+        self.direction_trvl()
         self.movement()
+
+
+    def direction_trvl(self):
+        self.passengers = []
+        for i in range(0, self.iterations):
+            self.begin_flr = random.randint(0, self.top_floor)
+            self.choice = ['Up', 'Down']
+            self.direction = random.choice(self.choice)
+            if self.direction == 'Up':
+                self.end_flr = random.randint(self.begin_flr, self.top_floor)
+            else:
+                self.end_flr = random.randint(0, self.begin_flr)
+            self.passengers.append(self.begin_flr)
+            self.passengers.append(self.direction)
+            self.passengers.append(self.end_flr)
+        print(self.passengers)
+        return self.passengers
 
 
     def travel(self):
@@ -78,4 +98,5 @@ def on_closing():
 if __name__ == "__main__":
     window = Window()
     window.protocol("WM_DELETE_WINDOW", on_closing)
+    window.minsize(350, 300)
     window.mainloop()
