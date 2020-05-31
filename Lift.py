@@ -1,19 +1,20 @@
 import tkinter as root
-
+import random
 class Window(root.Tk):
     def __init__(self, *args, **kwargs):
-        floors = int(input("Number of floors "))
-        lifts = int(input("Number of lifts "))
+        self.floors = 10
+        self.lifts = 1
         root.Tk.__init__(self, *args, **kwargs)
         self.title("Lift Manager")
         self.canvas = root.Canvas(self, width=500, height=500, borderwidth=0, highlightthickness=0)
         self.canvas.pack(side="top", fill="both", expand="true")
-        self.rows = floors
-        self.columns = lifts * 2
+        self.rows = self.floors
+        self.columns = self.lifts * 2
         self.tiles = {}
         self.canvas.bind("<Configure>", self.redraw)
         self.status = root.Label(self, anchor="w")
         self.status.pack(side="bottom", fill="x")
+
 
     def redraw(self, event=None):
         self.canvas.delete("rect")
@@ -32,12 +33,13 @@ class Window(root.Tk):
 #                   self.canvas.tag_bind(tile, "<1>", lambda event, row=row, column=column: self.clicked(row, column))
             elif column in range(0, (self.columns-1), 2):
                 floor_num = 0
-                for row in range(self.rows):
+                for row in range(self.rows, 0, -1):
+                    print(row)
                     floor_num += 1
-                    x1 = column*cellwidth
+                    x1 = column * cellwidth
                     y1 = row * cellheight
-                    x2 = x1 + (cellwidth//2)
-                    y2 = y1 + (cellheight//2)
+                    x2 = x1 + (cellwidth//1.5)
+                    y2 = y1 - (cellheight//2)
                     self.canvas.create_text(x2, y2, text=str(floor_num), tags="flrs", font=('Arial', -round(cellheight//1.75)))
 
     def clicked(self, row, column):
@@ -46,6 +48,10 @@ class Window(root.Tk):
         new_color = "lightblue" if  tile_color == "lightpink" else "lightpink"
         self.canvas.itemconfigure(tile, fill=new_color)
         self.status.configure(text="you clicked on %s/%s" % (row, column))
+
+    def travel(self):
+        start = random.randint(0, self.floors)
+        end = random.randint(0, self.floors)
 
 if __name__ == "__main__":
     window = Window()
