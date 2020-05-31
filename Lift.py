@@ -1,20 +1,18 @@
 from tkinter import *
 root = Tk()
 
-def window(main):
-    main.title('Lift Manager')
-    main.update_idletasks()
-    width = main.winfo_width()
-    height = main.winfo_height()
-    x = (main.winfo_screenwidth() // 2) - (width // 2)
-    y = (main.winfo_screenheight() // 2) - (height // 2)
-    main.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
 
-window(root)
-mainloop()
+column_size = str(screen_width//2)
+print(column_size)
+lift_1=Label(root, bg="lightblue")
+lift_2=Label(root, bg="lightpink")
+
+lift_1.grid(row=0, column=0)
+lift_2.grid(row=0, column=1)
+root.mainloop()
 """
-height = 500
-width = 500
 
 left = 0
 top = 3
