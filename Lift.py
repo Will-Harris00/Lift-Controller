@@ -55,7 +55,7 @@ class Window(root.Tk):
                         self.canvas.create_text(x2, y2, text=str(floor_num), tags="flrs",
                                                 font=('Arial', -round(cellheight // 1.75)))
                     floor_num += 1
-        self.run()
+        self.move()
 
     def run(self):
         while self.iterations > 0:
@@ -65,13 +65,16 @@ class Window(root.Tk):
                 self.motor_direction *= -1
             else:
                 time.sleep(0.5)
+                self.canvas.delete("lfts")
                 self.position += self.motor_direction
+
 
     def move(self):
         self.lift = self.lift_pos[self.num_lifts, self.position]
         lift_color = self.canvas.itemcget(self.lift, "fill")
         new_color = "lightblue" if  lift_color == "lightpink" else "lightpink"
         self.canvas.itemconfigure(self.lift, fill=new_color)
+
 
     def passengers(self):
         self.waiting_dict = {}
