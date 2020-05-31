@@ -1,8 +1,11 @@
 import tkinter as root
+import time
 from tkinter import messagebox
 import random
 class Window(root.Tk):
     def __init__(self, *args, **kwargs):
+        self.lift_floor = 0
+        self.motor_direction = 1
         self.iterations = 10
         self.num_floors = 10
         self.top_floor = self.num_floors - 1
@@ -52,48 +55,36 @@ class Window(root.Tk):
                         self.canvas.create_text(x2, y2, text=str(floor_num), tags="flrs",
                                                 font=('Arial', -round(cellheight // 1.75)))
                     floor_num += 1
-        self.direction_trvl()
-        self.movement()
+        self.run()
 
-
-    def direction_trvl(self):
-        self.passengers = []
-        for i in range(0, self.iterations):
-            self.begin_flr = random.randint(0, self.top_floor)
-            self.choice = ['Up', 'Down']
-            self.direction = random.choice(self.choice)
-            if self.direction == 'Up':
-                self.end_flr = random.randint(self.begin_flr, self.top_floor)
+    def run(self):
+        while self.iterations > 0:
+            self.iterations -= 1
+            self.move()
+            if self.position == self.top_floor or 0:
+                self.motor_direction *= -1
             else:
-                self.end_flr = random.randint(0, self.begin_flr)
-            self.passengers.append(self.begin_flr)
-            self.passengers.append(self.direction)
-            self.passengers.append(self.end_flr)
-        print(self.passengers)
-        return self.passengers
+                time.sleep(0.5)
+                self.position += self.motor_direction
 
-
-    def travel(self):
-        self.dest = []
-        start = random.randint(0, self.top_floor)
-        end = random.randint(0, self.top_floor)
-        self.dest.append(start)
-        self.dest.append(end)
-        print(self.dest)
-        return self.dest
-
-
-    def movement(self):
+    def move(self):
         self.lift = self.lift_pos[self.num_lifts, self.position]
         lift_color = self.canvas.itemcget(self.lift, "fill")
         new_color = "lightblue" if  lift_color == "lightpink" else "lightpink"
         self.canvas.itemconfigure(self.lift, fill=new_color)
 
+    def passengers(self):
+        self.waiting_dict = {}
+        for i in range(0, self.iterations):
+            self.begin_flr = random.randint(0, self.top_floor)
+            self.choice = ['Up', 'Down']
+            self.direction = random.choice(self.choice)
+            self.waiting_dict.update({i: self.direction})
+        print(self.waiting_dict)
 
 def on_closing():
     if messagebox.askokcancel("Exit program", "Do you want to quit?"):
         window.destroy()
-
 
 if __name__ == "__main__":
     window = Window()
