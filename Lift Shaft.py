@@ -2,28 +2,21 @@ import tkinter
 import time
 from tkinter import messagebox
 
-height = 500
-width = 500
-
-left = 0
-top = 3
-bottom = height
-right = width
-
-# determines the size of the lift based on the number of
-# lifts that can fit in the animation window.
-length = 25
-# coordinate system [left x1, top y1, right x2, bottom y2]
-
 
 class root(tkinter.Tk):
     def __init__(self, *args, **kwargs):
         tkinter.Tk.__init__(self, *args, **kwargs)
         self.title("Lift Manager")
-        self.canvas = tkinter.Canvas(self, width=500, height=500, borderwidth=0, highlightthickness=0, relief='ridge', bg="lightblue")
-        self.num_flrs = 10
-        self.lift = self.canvas.create_rectangle(50, 4, 75, 28, fill="pink", outline='grey')
-        self.shaft = self.canvas.create_rectangle(49, 3, 76, 400, fill="white", outline='black', width="1")
+        self.canvas = tkinter.Canvas(self, width=500, height=500, borderwidth=0, highlightthickness=0, closeenough=0, relief='ridge', bg="lightblue")
+        self.numberOfFloors = 10
+        self.lift = self.canvas.create_rectangle(self.canvas.winfo_reqwidth() / 2, 1,
+                                                 self.canvas.winfo_reqwidth() - 3,
+                                                 (self.canvas.winfo_reqheight() / self.numberOfFloors) - 1,
+                                                 fill="pink", outline='grey', tags="lift")
+        self.shaft = self.canvas.create_rectangle((self.canvas.winfo_reqwidth() / 2) - 1, 0,
+                                                  self.canvas.winfo_reqwidth() - 2,
+                                                  self.canvas.winfo_reqheight() - 2, fill="white",
+                                                  outline='black', width="1", tags="shaft")
         self.canvas.tag_raise(self.shaft)
         self.canvas.tag_raise(self.lift)
         self.canvas.pack(side="top", fill="both", expand="true")
@@ -45,9 +38,9 @@ class root(tkinter.Tk):
             self.root.update()
             self.canvas.update()
             time.sleep(0.02)
-            if position[3] >= bottom:
+            if position[3] >= 500:
                 yspeed = -yspeed
-            elif position[1] == top:
+            elif position[1] == 500:
                 yspeed = -yspeed
 
 def on_closing():
@@ -58,5 +51,6 @@ if __name__ == "__main__":
     root = root()
     root.protocol("WM_DELETE_WINDOW", on_closing)
     root.minsize(350, 300)
+    root.update_idletasks()
     root.mainloop()
 
