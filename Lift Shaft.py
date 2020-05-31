@@ -15,34 +15,20 @@ class root(tkinter.Tk):
     def redraw(self, event=None):
         self.canvas.delete("lift")
         self.canvas.delete("shaft")
+        self.canvas.delete("statusbar")
+        self.statusbar = tkinter.Label(self, anchor="sw")
+        self.statusbar.configure(text="Number of floors: %s" % (self.numberOfFloors))
+        self.frame = self.canvas.create_window(0, self.canvas.winfo_reqheight(), window=self.statusbar, width=self.canvas.winfo_reqwidth(), height=self.statusbar.winfo_reqheight(), anchor="sw", tags="statusbar")
         self.lift = self.canvas.create_rectangle(self.canvas.winfo_reqwidth() / 2, 1,
                                                  self.canvas.winfo_reqwidth() - 3,
                                                  (self.canvas.winfo_reqheight() / self.numberOfFloors) - 1,
                                                  fill="pink", outline='grey', tags="lift")
         self.shaft = self.canvas.create_rectangle((self.canvas.winfo_reqwidth() / 2) - 1, 0,
                                                   self.canvas.winfo_reqwidth() - 2,
-                                                  self.canvas.winfo_reqheight() - 2, fill="white",
+                                                  self.canvas.winfo_reqheight() - (self.statusbar.winfo_reqheight() + 2), fill="white",
                                                   outline='black', width="1", tags="shaft")
         self.canvas.tag_raise(self.shaft)
         self.canvas.tag_raise(self.lift)
-        self.status = tkinter.Label(self, anchor="sw")
-        self.status.pack(side="bottom", fill="x")
-        self.status.pack_propagate(1)
-        self.status.configure(text="Number of floors: %s" % (self.numberOfFloors))
-
-    def move(self):
-        xspeed = 0
-        yspeed = 1
-        while True:
-            self.canvas.move(self.lift, xspeed, yspeed)
-            position = self.canvas.coords(self.lift)
-            self.root.update()
-            self.canvas.update()
-            time.sleep(0.02)
-            if position[3] >= 500:
-                yspeed = -yspeed
-            elif position[1] == 500:
-                yspeed = -yspeed
 
 def on_closing():
     if messagebox.askokcancel("Exit program", "Do you want to quit?"):
@@ -52,7 +38,7 @@ if __name__ == "__main__":
     root = root()
     root.protocol("WM_DELETE_WINDOW", on_closing)
     root.minsize(350, 300)
-    root.pack_propagate(1)
-    root.update_idletasks()
+    #root.pack_propagate(1)
+    #root.update_idletasks()
     root.mainloop()
 
