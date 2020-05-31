@@ -43,7 +43,7 @@ class model(Frame):
     def validate(self):
         self.numFloors = int(self.inputNumFloors.get())
         self.numPeople = int(self.inputNumPeople.get())
-        if self.numFloors < 10 or self.numFloors > 10:
+        if self.numFloors < 2 or self.numFloors > 10:
             self.error.set(
                 "The number of floors '" + self.inputNumPeople.get() + "' is out of range. Please choose a number between 2 and 10.")
             print(
@@ -64,7 +64,7 @@ class model(Frame):
         self.canvas.delete("flrs")
         self.canvas.delete("divs")
         cellwidth = int(self.canvas.winfo_width() / 3)
-        cellheight = int((self.canvas.winfo_height() - self.numFloors) / self.numFloors)
+        cellheight = int(round(self.canvas.winfo_height() / self.numFloors))
         for column in range(3):
             current_floor = self.numFloors - 1
             if column in range(1, 3, 2):
@@ -73,7 +73,13 @@ class model(Frame):
                     y1 = row * cellheight
                     x2 = x1 + cellwidth
                     y2 = y1 + cellheight
-                    lift_pos = self.canvas.create_rectangle(x1, y1, x2, y2, fill="NavajoWhite",
+                    if row % 2 == 0:
+                        y2 -= 1
+                    self.canvas.create_line(0, y1, self.canvas.winfo_width(),
+                                            y1, fill="burlywood",
+                                            tags="divs")
+                    lift_pos = self.canvas.create_rectangle(x1, y1, x2, y2,
+                                                            fill="NavajoWhite",
                                                             tags="flrs")
                     self.lift_pos[current_floor] = lift_pos
                     current_floor -= 1
@@ -81,24 +87,19 @@ class model(Frame):
                 floor_num = 0
                 for row in range(self.numFloors, 0, -1):
                     # x1 = column * cellwidth
-                    y1 = row * cellheight
+                    y1 = (row * cellheight) - 5
+                    if row % 2 == 0:
+                        y1 -= 1
                     # x2 = x1 + (cellwidth // cellwidth)
                     y2 = y1 - (cellheight // 1.5)
                     if floor_num == 0:
-                        self.canvas.create_text(0, y2, anchor="nw", text="G", tags="nums",
+                        self.canvas.create_text(1, y2, anchor="nw", text="G", tags="nums",
                                                 font=('Arial', -round(cellheight // 1.75)))
                     elif floor_num != 0:
-                        self.canvas.create_text(0, y2, anchor="nw", text=str(floor_num),
+                        self.canvas.create_text(1, y2, anchor="nw", text=str(floor_num),
                                                 tags="flrs",
                                                 font=('Arial', -round(cellheight // 1.75)))
                     floor_num += 1
-        for i in range(self.numFloors + 1):
-            self.dividor = self.canvas.create_line(0, (
-                        self.canvas.winfo_height() - (2 * self.numFloors) + 1) / self.numFloors * i,
-                                                   self.canvas.winfo_width(), ((
-                                                                                           self.canvas.winfo_height() - (
-                                                                                               2 * self.numFloors)) / self.numFloors * i) + 1,
-                                                   fill="burlywood", width=2, tags="divs")
 
 
 def on_closing():
