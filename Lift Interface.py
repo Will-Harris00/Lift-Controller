@@ -2,11 +2,6 @@ from tkinter import *
 from tkinter import messagebox
 
 
-# self.master = Tk()
-
-# entry class for setup
-
-
 class root(Frame):
     def __init__(self, master):
         self.master = master
@@ -14,53 +9,63 @@ class root(Frame):
         self.canvas = Canvas(self.master, width=500, height=500, borderwidth=0,
                              highlightthickness=0, bg="lightblue")
         self.canvas.pack(fill="both", expand="true")
-        self.numberOfFloors = 12
 
-        self.redbutton = Button(self.master, text="Red", fg="red")
-        self.redbutton.pack(side=LEFT)
+        self.error = StringVar()
+        self.errorLabel = Label(self.master, textvariable=self.error)
+        self.error.set('No errors currently detected.')
+        self.errorLabel.pack(side="bottom", fill='both')
 
-        self.greenbutton = Button(self.master, text="green", fg="green")
-        self.greenbutton.pack(side=LEFT)
+        self.numFloors = IntVar()
+        self.numPeople = IntVar()
+        self.numFloors.set(10)
+        self.numPeople.set(100)
 
-        self.bluebutton = Button(self.master, text="Blue", fg="blue")
-        self.bluebutton.pack(side=LEFT)
-        self.canvas.update()
+        self.floorsString = StringVar()
+        self.floorsString.set("Floors :")
+        self.floorsLabel = Label(self.master, textvariable=self.floorsString)
+        self.floorsLabel.pack(side="left")
+        self.inputNumFloors = Entry(self.master, textvariable=self.numFloors, width=3)
+        self.inputNumFloors.pack(side="left")
 
-    def redraw(self, event=None):
-        self.canvas.delete("lift")
-        self.canvas.delete("shaft")
-        self.canvas.delete("flrnums")
-        self.canvas.delete("statusbar")
-        self.statusbar = Label(self, anchor="sw")
-        self.statusbar.configure(text="Number of floors: %s" % (self.numberOfFloors))
-        self.frame = self.canvas.create_window(0, self.canvas.winfo_height(), window=self.statusbar,
-                                               width=self.canvas.winfo_width(),
-                                               height=self.statusbar.winfo_reqheight(), anchor="sw",
-                                               tags="statusbar")
-        self.lift = self.canvas.create_rectangle(self.canvas.winfo_width() / 2, 1,
-                                                 self.canvas.winfo_width() - 3,
-                                                 (
-                                                             self.canvas.winfo_height() / self.numberOfFloors) - 1,
-                                                 fill="pink", outline='grey', tags="lift")
-        self.shaft = self.canvas.create_rectangle((self.canvas.winfo_width() / 2) - 1, 0,
-                                                  self.canvas.winfo_width() - 2,
-                                                  self.canvas.winfo_height() - (
-                                                              self.statusbar.winfo_reqheight() + 2),
-                                                  fill="white",
-                                                  outline='black', width="1", tags="shaft")
-        self.canvas.update()
-        usable_height = self.canvas.winfo_height() - (15 + self.statusbar.winfo_height())
-        start_low = self.canvas.winfo_height() - (self.statusbar.winfo_height())
-        for i in range(self.numberOfFloors):
-            # change the i at the end of the line to multiple -12 by either one or zero depending on if the floor number is zero or not
-            # j = int(i > 0)
-            self.floor_numbers = self.canvas.create_text(12, start_low - (
-                        (i + 1) * (usable_height / (self.numberOfFloors))),
-                                                         text=str(i), tags="flrnums",
-                                                         font=('Arial', 12))
-        # self.floor_numbers = self.canvas.create_text(12, -12 + (self.canvas.winfo_height() - self.statusbar.winfo_reqheight()) - (((i) * (self.canvas.winfo_height()/(self.numberOfFloors))) - (12 * j)), text=str(i), tags="flrnums", font=('Arial', 12))
-        self.canvas.tag_raise(self.shaft)
-        self.canvas.tag_raise(self.lift)
+        self.peopleString = StringVar()
+        self.peopleString.set("People :")
+        self.peopleLabel = Label(self.master, textvariable=self.peopleString)
+        self.peopleLabel.pack(side="left", padx=4, pady=2)
+        self.inputNumPeople = Entry(self.master, textvariable=self.numPeople, width=3)
+        self.inputNumPeople.pack(side="left", pady=2)
+
+        self.info = StringVar()
+        self.infoLabel = Label(self.master, textvariable=self.info)
+        self.info.set('Information: ')
+        self.infoLabel.pack(side="left", fill='both', padx=5, pady=2)
+
+        self.startBtn = Button(self.master, text="Run", fg="green", width=5,
+                               command=lambda: self.validate())
+        self.startBtn.pack(side="right", padx=4, pady=2)
+        self.autocompleteBtn = Button(self.master, text="Autocomplete", fg="blue")
+        self.autocompleteBtn.pack(side="right", padx=4, pady=2)
+
+    def validate(self):
+        self.numFloors = int(self.inputNumFloors.get())
+        self.numPeople = int(self.inputNumPeople.get())
+        if self.numFloors < 2 or self.numFloors > 25:
+            self.error.set(
+                "The number of floors '" + self.inputNumPeople.get() + "' is out of range. Please choose a number between 2 and 30.")
+            print(
+                "The number of floors '" + self.inputNumPeople.get() + "' is out of range. Please choose a number between 2 and 30.")
+        elif self.numPeople < 1 or self.numPeople > 200:
+            self.error.set(
+                "The number of people '" + self.inputNumFloors.get() + "' is out of range. Please choose a number between 1 and 200.")
+            print(
+                "The number of people '" + self.inputNumFloors.get() + "' is out of range. Please choose a number between 1 and 200.")
+        else:
+            self.inputNumFloors.config(state="disabled")
+            self.inputNumPeople.config(state="disabled")
+            self.error.set('No errors currently detected.')
+            root.draw(self)
+
+    def draw(self):
+        self.canvas.create_rectangle(0, 0, 100, 100)
 
 
 def on_closing():
