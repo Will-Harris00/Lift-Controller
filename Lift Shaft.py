@@ -8,7 +8,7 @@ class root(tk.Tk):
         self.title("Lift Manager")
         self.canvas = tk.Canvas(self, width=500, height=500, borderwidth=0, highlightthickness=0, bg="lightblue")
         self.canvas.pack(fill="both", expand="true")
-        self.numberOfFloors = 10
+        self.numberOfFloors = 12
         self.canvas.bind("<Configure>", self.redraw)
 
 
@@ -29,11 +29,15 @@ class root(tk.Tk):
                                                   self.canvas.winfo_height() - (self.statusbar.winfo_reqheight() + 2), fill="white",
                                                   outline='black', width="1", tags="shaft")
         tk.Tk.update(self)
+        usable_height = self.canvas.winfo_height() - (15 + self.statusbar.winfo_height())
+        start_low = self.canvas.winfo_height() - (self.statusbar.winfo_height())
         for i in range(self.numberOfFloors):
             # change the i at the end of the line to multiple -12 by either one or zero depending on if the floor number is zero or not
-            j = i
-            j = int(j > 0)
-            self.floor_numbers = self.canvas.create_text(10, -12 + (self.canvas.winfo_height() - self.statusbar.winfo_reqheight()) - (((i) * (self.canvas.winfo_height()/(self.numberOfFloors))) - (12 * j)), text=str(i), tags="flrnums", font=('Arial', 12))
+            #j = int(i > 0)
+            self.floor_numbers = self.canvas.create_text(12, start_low - ( (i+1) *  (usable_height / (self.numberOfFloors))),
+                                                         text=str(i), tags="flrnums",
+                                                         font=('Arial', 12))
+           # self.floor_numbers = self.canvas.create_text(12, -12 + (self.canvas.winfo_height() - self.statusbar.winfo_reqheight()) - (((i) * (self.canvas.winfo_height()/(self.numberOfFloors))) - (12 * j)), text=str(i), tags="flrnums", font=('Arial', 12))
         self.canvas.tag_raise(self.shaft)
         self.canvas.tag_raise(self.lift)
 
