@@ -1,38 +1,47 @@
-import tkinter
-import time
+import tkinter as tk
 from tkinter import messagebox
 
 
-class root(tkinter.Tk):
+class root(tk.Tk):
     def __init__(self, *args, **kwargs):
-        tkinter.Tk.__init__(self, *args, **kwargs)
+        tk.Tk.__init__(self, *args, **kwargs)
         self.title("Lift Manager")
-        self.canvas = tkinter.Canvas(self, width=500, height=500, borderwidth=0, highlightthickness=0, closeenough=0, relief='ridge', bg="lightblue")
+        self.canvas = tk.Canvas(self, width=500, height=500, borderwidth=0, highlightthickness=0, bg="lightblue")
+        self.canvas.pack(fill="both", expand="true")
         self.numberOfFloors = 10
-        self.canvas.pack(side="top", fill="both", expand="true")
         self.canvas.bind("<Configure>", self.redraw)
+
 
     def redraw(self, event=None):
         self.canvas.delete("lift")
         self.canvas.delete("shaft")
+        self.canvas.delete("flrnums")
         self.canvas.delete("statusbar")
-        self.statusbar = tkinter.Label(self, anchor="sw")
+        self.statusbar = tk.Label(self, anchor="sw")
         self.statusbar.configure(text="Number of floors: %s" % (self.numberOfFloors))
-        self.frame = self.canvas.create_window(0, self.canvas.winfo_reqheight(), window=self.statusbar, width=self.canvas.winfo_reqwidth(), height=self.statusbar.winfo_reqheight(), anchor="sw", tags="statusbar")
-        self.lift = self.canvas.create_rectangle(self.canvas.winfo_reqwidth() / 2, 1,
-                                                 self.canvas.winfo_reqwidth() - 3,
-                                                 (self.canvas.winfo_reqheight() / self.numberOfFloors) - 1,
+        self.frame = self.canvas.create_window(0, self.canvas.winfo_height(), window=self.statusbar, width=self.canvas.winfo_width(), height=self.statusbar.winfo_reqheight(), anchor="sw", tags="statusbar")
+        self.lift = self.canvas.create_rectangle(self.canvas.winfo_width() / 2, 1,
+                                                 self.canvas.winfo_width() - 3,
+                                                 (self.canvas.winfo_height() / self.numberOfFloors) - 1,
                                                  fill="pink", outline='grey', tags="lift")
-        self.shaft = self.canvas.create_rectangle((self.canvas.winfo_reqwidth() / 2) - 1, 0,
-                                                  self.canvas.winfo_reqwidth() - 2,
-                                                  self.canvas.winfo_reqheight() - (self.statusbar.winfo_reqheight() + 2), fill="white",
+        self.shaft = self.canvas.create_rectangle((self.canvas.winfo_width() / 2) - 1, 0,
+                                                  self.canvas.winfo_width() - 2,
+                                                  self.canvas.winfo_height() - (self.statusbar.winfo_reqheight() + 2), fill="white",
                                                   outline='black', width="1", tags="shaft")
+        tk.Tk.update(self)
+        for i in range(self.numberOfFloors):
+            # change the i at the end of the line to multiple -12 by either one or zero depending on if the floor number is zero or not
+            j = i
+            j = int(j > 0)
+            self.floor_numbers = self.canvas.create_text(10, -12 + (self.canvas.winfo_height() - self.statusbar.winfo_reqheight()) - (((i) * (self.canvas.winfo_height()/(self.numberOfFloors))) - (12 * j)), text=str(i), tags="flrnums", font=('Arial', 12))
         self.canvas.tag_raise(self.shaft)
         self.canvas.tag_raise(self.lift)
+
 
 def on_closing():
     if messagebox.askokcancel("Exit program", "Do you want to quit?"):
         root.destroy()
+
 
 if __name__ == "__main__":
     root = root()
