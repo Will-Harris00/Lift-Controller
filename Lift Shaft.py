@@ -9,6 +9,12 @@ class root(tkinter.Tk):
         self.title("Lift Manager")
         self.canvas = tkinter.Canvas(self, width=500, height=500, borderwidth=0, highlightthickness=0, closeenough=0, relief='ridge', bg="lightblue")
         self.numberOfFloors = 10
+        self.canvas.pack(side="top", fill="both", expand="true")
+        self.canvas.bind("<Configure>", self.redraw)
+
+    def redraw(self, event=None):
+        self.canvas.delete("lift")
+        self.canvas.delete("shaft")
         self.lift = self.canvas.create_rectangle(self.canvas.winfo_reqwidth() / 2, 1,
                                                  self.canvas.winfo_reqwidth() - 3,
                                                  (self.canvas.winfo_reqheight() / self.numberOfFloors) - 1,
@@ -19,15 +25,10 @@ class root(tkinter.Tk):
                                                   outline='black', width="1", tags="shaft")
         self.canvas.tag_raise(self.shaft)
         self.canvas.tag_raise(self.lift)
-        self.canvas.pack(side="top", fill="both", expand="true")
-        self.canvas.bind("<Configure>", self.redraw)
-        self.status = tkinter.Label(self, anchor="w")
+        self.status = tkinter.Label(self, anchor="sw")
         self.status.pack(side="bottom", fill="x")
-
-    def redraw(self, event=None):
-        self.canvas.delete("lift")
-        self.canvas.winfo_height()
-        self.canvas.winfo_height()
+        self.status.pack_propagate(1)
+        self.status.configure(text="Number of floors: %s" % (self.numberOfFloors))
 
     def move(self):
         xspeed = 0
@@ -51,6 +52,7 @@ if __name__ == "__main__":
     root = root()
     root.protocol("WM_DELETE_WINDOW", on_closing)
     root.minsize(350, 300)
+    root.pack_propagate(1)
     root.update_idletasks()
     root.mainloop()
 
