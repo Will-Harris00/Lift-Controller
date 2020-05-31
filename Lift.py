@@ -18,18 +18,23 @@ class App(tk.Tk):
         self.canvas.delete("rect")
         cellwidth = int(self.canvas.winfo_width()/self.columns)
         cellheight = int(self.canvas.winfo_height()/self.rows)
-        for column in range(0,self.columns,2):
+        for column in range(0, (self.columns-1), 2):
             for row in range(self.rows):
                 x1 = column*cellwidth
                 y1 = row * cellheight
                 x2 = x1 + cellwidth
                 y2 = y1 + cellheight
                 tile = self.canvas.create_rectangle(x1,y1,x2,y2, fill="lightblue", tags="rect")
-                self.tiles[row,column] = tile
-                self.canvas.tag_bind(tile, "<1>", lambda event, row=row, column=column: self.clicked(row, column))
+                self.tiles[row, column] = tile
+#                self.canvas.tag_bind(tile, "<1>", lambda event, row=row, column=column: self.clicked(row, column))
+        for column in range(1, (self.columns), 2):
+            floor_num = 0
+            for row in range(self.rows):
+                floor_num += 1
+                tk.Label(self.canvas, text=str(floor_num), fg='white', bg='lightpink').grid(row=row)
 
     def clicked(self, row, column):
-        tile = self.tiles[row,column]
+        tile = self.tiles[row, column]
         tile_color = self.canvas.itemcget(tile, "fill")
         new_color = "lightblue" if  tile_color == "lightpink" else "lightpink"
         self.canvas.itemconfigure(tile, fill=new_color)
