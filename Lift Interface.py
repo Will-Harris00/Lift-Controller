@@ -15,7 +15,7 @@ class model(Frame):
         self.errorLabel = Label(self.master, textvariable=self.error)
         self.errorLabel.pack(side="bottom", fill='both')
 
-        self.floorsLabel = Label(self.master, text="Storeys: ")
+        self.floorsLabel = Label(self.master, text="Floors: ")
         self.floorsLabel.pack(side="left")
         self.inputNumFloors = Entry(self.master, textvariable="", width=3)
         self.inputNumFloors.pack(side="left")
@@ -36,24 +36,38 @@ class model(Frame):
         self.startBtn.pack(side="right", padx=4, pady=2)
         self.autocompleteBtn = Button(self.master, text="Autocomplete", fg="blue")
         self.autocompleteBtn.pack(side="right", padx=4, pady=2)
+
         self.liftTiles = {}
         self.peopleList = []
 
 
     def validate(self):
-        self.numFloors = int(self.inputNumFloors.get())
-        self.numPeople = int(self.inputNumPeople.get())
-        if self.numFloors < 2  or self.numFloors > 25:
-            self.error.set("The number of floors '" + self.inputNumFloors.get() + "' is out of range. Please choose a number between 2 and 10.")
-            print("The number of floors '" + self.inputNumFloors.get() + "' is out of range. Please choose a number between 2 and 10.")
-        elif self.numPeople < 1  or self.numPeople > 50:
-            self.error.set("The number of people '" + self.inputNumPeople.get() + "' is out of range. Please choose a number between 1 and 50.")
-            print("The number of people '" + self.inputNumPeople.get() + "' is out of range. Please choose a number between 1 and 50.")
-        else:
-            #self.inputNumFloors.config(state="disabled")
-            #self.inputNumPeople.config(state="disabled")
-            self.error.set('No errors currently detected.')
-            model.draw()
+        try:
+            self.numFloors = int(self.inputNumFloors.get())
+            try:
+                self.numPeople = int(self.inputNumPeople.get())
+                if self.numFloors < 2 or self.numFloors > 25:
+                    self.error.set(
+                        "The number of floors '" + self.inputNumFloors.get() + "' is out of range. Please choose a number between 2 and 10.")
+                    print(
+                        "The number of floors '" + self.inputNumFloors.get() + "' is out of range. Please choose a number between 2 and 10.")
+                elif self.numPeople < 1 or self.numPeople > 50:
+                    self.error.set(
+                        "The number of people '" + self.inputNumPeople.get() + "' is out of range. Please choose a number between 1 and 50.")
+                    print(
+                        "The number of people '" + self.inputNumPeople.get() + "' is out of range. Please choose a number between 1 and 50.")
+                else:
+                    # self.inputNumFloors.config(state="disabled")
+                    # self.inputNumPeople.config(state="disabled")
+                    self.errorLabel.destroy()
+                    self.canvas.update()
+                    self.peopleLabel.config(text="P")
+                    self.floorsLabel.config(text="F")
+                    model.draw()
+            except:
+                self.error.set("Please provide a valid input for number of people.")
+        except:
+            self.error.set("Please provide a valid input for number of floors.")
 
 
     def draw(self):
@@ -82,7 +96,7 @@ class model(Frame):
                     current_floor -= 1
             elif column in range(0, 3, 2):
                 floor_num = 0
-                for row in range(self.numFloors + 1, 0, -1):
+                for row in range(self.numFloors, 0, -1):
                     y1 = (row * cellheight) - 5
                     if row % 2 == 0:
                         y1 -= 1
@@ -102,12 +116,11 @@ def on_closing():
 
 if __name__ == "__main__":
     master = Tk()
-    model = model(master)
     master.title("Lift Manager")
+    model = model(master)
     #peopleList = p.genPeople(model.numPeople, model.numFloors)
 
     master.protocol("WM_DELETE_WINDOW", on_closing)
     master.geometry("600x625+525+15")
     master.resizable(False, False)
     master.mainloop()
-
