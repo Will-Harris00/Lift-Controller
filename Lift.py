@@ -17,7 +17,7 @@ class Window(root.Tk):
 
 
     def redraw(self, event=None):
-        self.canvas.delete("rect")
+        self.canvas.delete("lfts")
         self.canvas.delete("flrs")
         cellwidth = int(self.canvas.winfo_width()/self.columns)
         cellheight = int(self.canvas.winfo_height()/self.rows)
@@ -28,19 +28,24 @@ class Window(root.Tk):
                     y1 = row * cellheight
                     x2 = x1 + cellwidth
                     y2 = y1 + cellheight
-                    tile = self.canvas.create_rectangle(x1,y1,x2,y2, fill="lightblue", tags="rect")
+                    tile = self.canvas.create_rectangle(x1,y1,x2,y2, fill="lightblue", tags="lfts")
                     self.tiles[row, column] = tile
 #                   self.canvas.tag_bind(tile, "<1>", lambda event, row=row, column=column: self.clicked(row, column))
             elif column in range(0, (self.columns-1), 2):
                 floor_num = 0
                 for row in range(self.rows, 0, -1):
                     print(row)
-                    floor_num += 1
                     x1 = column * cellwidth
                     y1 = row * cellheight
                     x2 = x1 + (cellwidth//1.5)
-                    y2 = y1 - (cellheight//2)
-                    self.canvas.create_text(x2, y2, text=str(floor_num), tags="flrs", font=('Arial', -round(cellheight//1.75)))
+                    y2 = y1 - (cellheight//1.5)
+                    if floor_num == 0:
+                        self.canvas.create_text(x2, y2, text="G", tags="flrs",
+                                                font=('Arial', -round(cellheight//1.75)))
+                    elif floor_num != 0:
+                        self.canvas.create_text(x2, y2, text=str(floor_num), tags="flrs",
+                                                font=('Arial', -round(cellheight // 1.75)))
+                    floor_num += 1
 
     def clicked(self, row, column):
         tile = self.tiles[row, column]
