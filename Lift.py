@@ -1,17 +1,18 @@
-import tkinter as tk
+import tkinter as root
 
-class App(tk.Tk):
+class Window(root.Tk):
     def __init__(self, *args, **kwargs):
         floors = int(input("Number of floors "))
         lifts = int(input("Number of lifts "))
-        tk.Tk.__init__(self, *args, **kwargs)
-        self.canvas = tk.Canvas(self, width=500, height=500, borderwidth=0, highlightthickness=0)
+        root.Tk.__init__(self, *args, **kwargs)
+        self.title("Lift Manager")
+        self.canvas = root.Canvas(self, width=500, height=500, borderwidth=0, highlightthickness=0)
         self.canvas.pack(side="top", fill="both", expand="true")
         self.rows = floors
         self.columns = lifts * 2
         self.tiles = {}
         self.canvas.bind("<Configure>", self.redraw)
-        self.status = tk.Label(self, anchor="w")
+        self.status = root.Label(self, anchor="w")
         self.status.pack(side="bottom", fill="x")
 
     def redraw(self, event=None):
@@ -35,11 +36,9 @@ class App(tk.Tk):
                     floor_num += 1
                     x1 = column*cellwidth
                     y1 = row * cellheight
-                    x2 = x1 + cellwidth
-                    y2 = y1 + cellheight
-                    self.canvas.create_rectangle(x1, y1, x2, y2, fill="lightpink",
-                                                        tags="flrs")
-
+                    x2 = x1 + (cellwidth//2)
+                    y2 = y1 + (cellheight//2)
+                    self.canvas.create_text(x2, y2, text=str(floor_num), tags="flrs", font=('Arial', -round(cellheight//1.75)))
 
     def clicked(self, row, column):
         tile = self.tiles[row, column]
@@ -49,5 +48,5 @@ class App(tk.Tk):
         self.status.configure(text="you clicked on %s/%s" % (row, column))
 
 if __name__ == "__main__":
-    app = App()
-    app.mainloop()
+    window = Window()
+    window.mainloop()
