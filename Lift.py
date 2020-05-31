@@ -16,22 +16,30 @@ class App(tk.Tk):
 
     def redraw(self, event=None):
         self.canvas.delete("rect")
+        self.canvas.delete("flrs")
         cellwidth = int(self.canvas.winfo_width()/self.columns)
         cellheight = int(self.canvas.winfo_height()/self.rows)
-        for column in range(0, (self.columns-1), 2):
-            for row in range(self.rows):
-                x1 = column*cellwidth
-                y1 = row * cellheight
-                x2 = x1 + cellwidth
-                y2 = y1 + cellheight
-                tile = self.canvas.create_rectangle(x1,y1,x2,y2, fill="lightblue", tags="rect")
-                self.tiles[row, column] = tile
-#                self.canvas.tag_bind(tile, "<1>", lambda event, row=row, column=column: self.clicked(row, column))
-        for column in range(1, (self.columns), 2):
-            floor_num = 0
-            for row in range(self.rows):
-                floor_num += 1
-                tk.Label(self.canvas, text=str(floor_num), fg='white', bg='lightpink').grid(row=row)
+        for column in range(self.columns):
+            if column in range(1, (self.columns), 2):
+                for row in range(self.rows):
+                    x1 = column*cellwidth
+                    y1 = row * cellheight
+                    x2 = x1 + cellwidth
+                    y2 = y1 + cellheight
+                    tile = self.canvas.create_rectangle(x1,y1,x2,y2, fill="lightblue", tags="rect")
+                    self.tiles[row, column] = tile
+#                   self.canvas.tag_bind(tile, "<1>", lambda event, row=row, column=column: self.clicked(row, column))
+            elif column in range(0, (self.columns-1), 2):
+                floor_num = 0
+                for row in range(self.rows):
+                    floor_num += 1
+                    x1 = column*cellwidth
+                    y1 = row * cellheight
+                    x2 = x1 + cellwidth
+                    y2 = y1 + cellheight
+                    self.canvas.create_rectangle(x1, y1, x2, y2, fill="lightpink",
+                                                        tags="flrs")
+
 
     def clicked(self, row, column):
         tile = self.tiles[row, column]
