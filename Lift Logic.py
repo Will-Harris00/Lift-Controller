@@ -19,6 +19,8 @@ class Building(object):
         for person in floorsList[lift.currentFloor].peopleOnFloor:
             print("Person " + str(person.idPerson) + " is travelling in direction: " + str(person.direction) + " the lift direction is: " + str(lift.direction))
             if person.direction == lift.direction:
+                People.destination(person)
+                print("Person " + str(person.idPerson) + " started on floor " +  str(person.originFlr) + " travelling in direction " + str(person.direction) + " to floor " + str(person.destFlr))
                 Building.algorithm(self, person)
 
     def algorithm(self, person):
@@ -39,23 +41,27 @@ class Lift(object):
 
 class People(object):
     def __init__(self, numFloors, personId):
-        start = random.randint(0, numFloors)
-        # This concatenates two list either side of the originating floor of the passenger
-        selection = ((list(range(0, start))) + (list(range(start + 1, numFloors + 1))))
-        # The destination floor is selected from a list of available floors excluding the start.
-        end = random.choice(selection)
         self.idPerson = personId
-        if end > start:
-            # direction 1 shows the passenger wishes to travel to a higher floor
-            self.direction = 1
-        else:
-            # direction -1 show the passenger wishes to travel to a lower floor
-            self.direction = -1
-        self.originFlr = start
-        self.destFlr = end
+        self.originFlr = random.randint(0, numFloors)
+        # randomly selects whether the passenger is travelling up or down
+        self.direction = random.choice([-1,1])
         # print("\n"+str(self.originFlr))
         # print(self.direction)
         # print(self.destFlr)
+
+    def destination(self):
+        # A destination floor is generated based on whether the passenger is
+        # travelling up or down where only the applicable floors will be chosen.
+        if self.direction == 1:
+            # direction 1 shows the passenger wishes to travel to a higher floor
+            selection = list(range(self.originFlr + 1, numFloors + 1))
+            self.direction = 1
+        else:
+            # direction -1 show the passenger wishes to travel to a lower floor
+            selection = list(range(0, self.originFlr))
+        self.destFlr = random.choice(selection)
+
+
 
 
 class Floors(object):
