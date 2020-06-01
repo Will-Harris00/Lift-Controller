@@ -4,6 +4,7 @@ import random
 import time
 
 
+
 class VarEntry(Frame):
     def __init__(self, root, numFloors=10, numPeople=50, liftCapacity=6):
         self.root = root
@@ -94,7 +95,8 @@ class VarEntry(Frame):
             self.error.set("Please provide a valid input for number of floors.")
 
 
-class Structure():
+
+class Model():
     def __init__(self, master):
         self.master = master
         self.canvas = Canvas(self.master, width=500, height=500, borderwidth=0, highlightthickness=0,
@@ -116,12 +118,12 @@ class Structure():
                     if row % 2 == 0:
                         y2 -= 1
                     self.canvas.create_line(0, y1, self.canvas.winfo_reqwidth(),
-                                                      y1, fill="burlywood",
+                                                      y1, fill="BurlyWood",
                                                       tags="divs")
-                    liftPosition = self.canvas.create_rectangle(x1, y1, x2, y2,
+                    tile = self.canvas.create_rectangle(x1, y1, x2, y2,
                                                             fill="NavajoWhite",
                                                             tags="flrs")
-                    lift.tiles[current_floor] = liftPosition
+                    lift.tiles[current_floor - 1] = tile
                     current_floor -= 1
             elif column in range(0, 3, 2):
                 floor_num = 0
@@ -132,12 +134,23 @@ class Structure():
                     y2 = y1 - (cellheight // 1.5)
                     self.canvas.create_text(1, y2, anchor="nw", text=str(floor_num), tags="flrs",
                                             font=('Arial', -round(cellheight // 1.75)))
+                    self.canvas.create_text(cellwidth - 3, y2 + 3, anchor="ne",
+                                            text=str(len(floorsList[floor_num].peopleOnFloor)),
+                                            fill="CadetBlue",
+                                            font=('Arial', -round(cellheight // 2)))
                     floor_num += 1
-        """
-        if self.inputNumFloors.get() and self.inputNumFloors.get() != "":
-            self.inputNumFloors.config(state="disabled")
-            self.inputNumPeople.config(state="disabled")
-        """
+        self.update(vars.numPeople)
+        print(lift.tiles)
+
+
+    def update(self, numRemaining):
+        self.peopleRemaining = Label(self.master, text="People remaining: " + str(numRemaining))
+        self.peopleRemaining.pack(side="left")
+        self.floorsMoved = Label(self.master, text="Floors moved: " + str(
+            lift.floorsMoved))
+        self.floorsMoved.pack(side="left")
+        self.master.update()
+
 
 
 class Building(object):
@@ -147,13 +160,29 @@ class Building(object):
 
     def move(self):
         while len(peopleWaiting) > 0:
-            # print("\nThe lift is on floor: " + str(lift.currentFloor))
+            time.sleep(0.1)
+            print("\nThe lift is on floor: " + str(lift.currentFloor))
             Building.collect(self)
             Building.deliver(self)
+            if not ((lift.currentFloor == numFloors -1) or (lift.currentFloor == 0)):
+                try:
+                    tile = lift.tiles[lift.currentFloor - lift.direction]
+                    model.canvas.itemconfigure(tile, fill="NavajoWhite")
+                    model.canvas.update()
+                except KeyError:
+                    pass
+            else:
+                tile = lift.tiles[lift.currentFloor + lift.direction]
+                model.canvas.itemconfigure(tile, fill="NavajoWhite")
+                model.canvas.update()
+            tile = lift.tiles[lift.currentFloor]
+            model.canvas.itemconfigure(tile, fill="LightPink")
+            model.canvas.update()
             lift.currentFloor += lift.direction
             lift.floorsMoved += 1
             if lift.currentFloor == numFloors - 1 or lift.currentFloor == 0:
                 lift.direction *= -1
+
 
 
     def collect(self):
@@ -162,14 +191,14 @@ class Building(object):
             # adds waiting passengers to the lift if travelling in the direction of the lift.
             if person.direction == lift.direction:
                 People.destination(person)
-                print("\nPerson " + str(person.idPerson) + " started on floor " +  str(person.originFlr) + " travelling in direction " + str(person.direction) + " to floor " + str(person.destFlr))
+                #print("\nPerson " + str(person.idPerson) + " started on floor " +  str(person.originFlr) + " travelling in direction " + str(person.direction) + " to floor " + str(person.destFlr))
                 # add as many passenger as possible before the lift becomes full.
                 if len(lift.passengers) < lift.capacity:
                     lift.passengers.append(person)
                     floorsList[lift.currentFloor].peopleOnFloor.remove(person)
-                    print("\nPerson " + str(person.idPerson) + " got in the lift at floor " + str(
-                        lift.currentFloor))
-                    print("There are " + str(len(lift.passengers)) + " passenger in the lift.")
+                    #print("\nPerson " + str(person.idPerson) + " got in the lift at floor " + str(
+                        #lift.currentFloor))
+                    #print("There are " + str(len(lift.passengers)) + " passenger in the lift.")
                 else:
                     break
 
@@ -180,8 +209,9 @@ class Building(object):
                 lift.passengers.remove(person)
                 peopleArrived.append(person)
                 peopleWaiting.remove(person)
-                print("Person " + str(person.idPerson) + " got out of the lift on floor " + str(person.destFlr))
-                print("There are " + str(len(lift.passengers)) + " passengers in the lift.")
+                #print("Person " + str(person.idPerson) + " got out of the lift on floor " + str(person.destFlr))
+                #print("There are " + str(len(lift.passengers)) + " passengers in the lift.")
+
 
 
 class Lift(object):
@@ -192,6 +222,7 @@ class Lift(object):
         self.floorsMoved = 0
         self.passengers = []
         self.tiles = {}
+
 
 
 class People(object):
@@ -225,6 +256,7 @@ class People(object):
         self.destFlr = random.choice(selection)
 
 
+
 class Floors(object):
     def __init__(self, peopleWaiting, floorId):
         self.idFloor = floorId
@@ -241,6 +273,7 @@ class Floors(object):
         return self.peopleOnFloor
 
 
+
 def on_continue():
     if messagebox.askokcancel("Run animation", "Do you want to continue with default values?"):
         print("\nRunning simulation with default values.\n")
@@ -250,6 +283,7 @@ def on_continue():
 def on_closing():
     if messagebox.askokcancel("Exit program", "Do you want to quit?"):
         master.destroy()
+
 
 
 if __name__ == "__main__":
@@ -262,8 +296,6 @@ if __name__ == "__main__":
 
     # creates the lift object and add the index of tiles to a dictionary
     lift = Lift()
-    # Structure is the class containing the building objects
-    structure = Structure(master)
 
     peopleWaiting = []
     peopleArrived = []
@@ -271,15 +303,19 @@ if __name__ == "__main__":
     numFloors = vars.numFloors
     numPeople = vars.numPeople
 
-    # for personId in range(0, numPeople):
-        # peopleWaiting.append(People(numFloors - 1, personId))
+    for personId in range(0, numPeople):
+        peopleWaiting.append(People(numFloors - 1, personId))
     # print(peopleWaiting)
 
-    # for floorId in range(0, numFloors):
-        # floorsList.append(Floors(peopleWaiting, floorId))
+    for floorId in range(0, numFloors):
+        floorsList.append(Floors(peopleWaiting, floorId))
     # print(floorsList[numFloors - 1].idFloor)
     # print(floorsList[numFloors - 1].peopleOnFloor)
-    # Building()
+
+    # Model is the class containing the building objects
+    model = Model(master)
+
+    Building()
     # print("The lift has travelled " + str(lift.floorsMoved) + " floors.")
 
     master.title("Lift Manager")
