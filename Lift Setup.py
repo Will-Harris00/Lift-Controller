@@ -120,9 +120,9 @@ class Model():
                     y2 = y1 + cellheight
                     if row % 2 == 0:
                         y2 -= 1
-                    line = self.canvas.create_line(0, y1, self.canvas.winfo_reqwidth(),
-                                            y1, fill="BurlyWood",
-                                            tags="divs")
+                    line = self.canvas.create_line(0, y1, self.canvas.winfo_reqwidth(), y1,
+                                                   fill="BurlyWood",
+                                                   tags="divs")
                     # print("Line divider: " + str(line))
                     tile = self.canvas.create_rectangle(x1, y1, x2, y2,
                                                         fill="NavajoWhite",
@@ -141,10 +141,14 @@ class Model():
                         num = self.canvas.create_text(1, y2, anchor="nw", text=str(floor_num), tags="flrs",
                                                 font=('Arial', -round(cellheight // 1.75)))
                         # print("Floor number: " + str(num))
+                        try:
+                            num_waiting = len(waiting[floor_num])
+                        except KeyError:
+                            num_waiting =  0
                         departed_num = self.canvas.create_text(cellwidth - 3, y2 + 3, anchor="ne",
-                                                text=str(len(waiting[floor_num])),
-                                                fill="CadetBlue",
-                                                font=('Arial', -round(cellheight // 2)))
+                                                               text=str(num_waiting),
+                                                               fill="CadetBlue",
+                                                               font=('Arial', -round(cellheight // 2)))
                         self.departures[floor_num] = departed_num
                         # print("Depart number: " + str(departed_num))
                     elif column == 2:
@@ -153,9 +157,9 @@ class Model():
                             y1 -= 1
                         y2 = y1 - (cellheight // 1.5)
                         arrived_num = self.canvas.create_text((cellwidth * column) + 3, y2 + 3, anchor="nw",
-                                                text="0",
-                                                fill="CadetBlue",
-                                                font=('Arial', -round(cellheight // 2)))
+                                                              text="0",
+                                                              fill="CadetBlue",
+                                                              font=('Arial', -round(cellheight // 2)))
                         self.arrivals[floor_num] = arrived_num
                         # print("Arrive number: " + str(arrived_num))
                     floor_num += 1
@@ -210,7 +214,7 @@ class Building(object):
             # Model.update(self, numRemaining)
             if lift.currentFloor == numFloors - 1 or lift.currentFloor == 0:
                 lift.direction *= -1
-            time.sleep(0.1)
+            time.sleep(0.6)
         model.master.mainloop()
 
 
@@ -230,6 +234,7 @@ class Building(object):
                         departed_num = model.departures[lift.currentFloor]
                         model.canvas.itemconfigure(departed_num, text=str(len(waiting[lift.currentFloor])))
                         model.canvas.update()
+                        time.sleep(0.2)
                         if len(waiting[lift.currentFloor]) == 0:
                             del waiting[lift.currentFloor]
                         print("\nPerson " + str(person.id) + " got in the lift at floor " + str(lift.currentFloor))
@@ -251,6 +256,7 @@ class Building(object):
                 arrive_num = model.arrivals[lift.currentFloor]
                 model.canvas.itemconfigure(arrive_num, text=str(len(delivered[lift.currentFloor])))
                 model.canvas.update()
+                time.sleep(0.2)
                 print("Person " + str(person.id) + " exited the lift on floor " + str(person.destFlr))
                 print("There are " + str(len(lift.passengers)) + " passengers in the lift.")
 
