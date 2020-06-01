@@ -5,7 +5,8 @@ import time
 
 
 class VarEntry(Frame):
-    def __init__(self, root, numFloors=10, numPeople=50, liftCapacity=6):
+    def __init__(self, root, numFloors=10, numPeople=50, liftCapacity=6, **kw):
+        super().__init__(**kw)
         self.root = root
 
         self.error = StringVar()
@@ -97,6 +98,8 @@ class VarEntry(Frame):
 
 class Model():
     def __init__(self, master):
+        self.departures = {}
+        self.arrivals = {}
         self.master = master
         self.canvas = Canvas(self.master, width=500, height=500, borderwidth=0,
                              highlightthickness=0,
@@ -120,11 +123,11 @@ class Model():
                     line = self.canvas.create_line(0, y1, self.canvas.winfo_reqwidth(),
                                             y1, fill="BurlyWood",
                                             tags="divs")
-                    print("Line divider: " + str(line))
+                    # print("Line divider: " + str(line))
                     tile = self.canvas.create_rectangle(x1, y1, x2, y2,
                                                         fill="NavajoWhite",
                                                         tags="flrs")
-                    print("Lift Tile: " + str(tile))
+                    # print("Lift Tile: " + str(tile))
                     lift.tiles[current_floor - 1] = tile
                     current_floor -= 1
             elif column in range(0, 3, 2):
@@ -137,24 +140,28 @@ class Model():
                         y2 = y1 - (cellheight // 1.5)
                         num = self.canvas.create_text(1, y2, anchor="nw", text=str(floor_num), tags="flrs",
                                                 font=('Arial', -round(cellheight // 1.75)))
-                        print("Floor number: " + str(num))
-                        depart_num = self.canvas.create_text(cellwidth - 3, y2 + 3, anchor="ne",
+                        # print("Floor number: " + str(num))
+                        departed_num = self.canvas.create_text(cellwidth - 3, y2 + 3, anchor="ne",
                                                 text=str(len(floorsList[floor_num].peopleOnFloor)),
                                                 fill="CadetBlue",
                                                 font=('Arial', -round(cellheight // 2)))
-                        print("Depart number: " + str(depart_num))
-                        floor_num += 1
+                        self.departures[floor_num] = departed_num
+                        # print("Depart number: " + str(departed_num))
                     elif column == 2:
                         y1 = (row * cellheight) - 5
                         if row % 2 == 0:
                             y1 -= 1
                         y2 = y1 - (cellheight // 1.5)
-                        arrive_num = self.canvas.create_text((cellwidth * column) + 3, y2 + 3, anchor="nw",
+                        arrived_num = self.canvas.create_text((cellwidth * column) + 3, y2 + 3, anchor="nw",
                                                 text=str(len(peopleArrived)),
                                                 fill="CadetBlue",
                                                 font=('Arial', -round(cellheight // 2)))
-                        print("Arrive number: " + str(arrive_num))
-                        floor_num += 1
+                        self.arrivals[floor_num] = arrived_num
+                        # print("Arrive number: " + str(arrived_num))
+                    floor_num += 1
+        # print(lift.tiles)
+        # print(self.departures)
+        # print(self.arrivals)
         self.master.title("Lift Manager")
         self.master.protocol("WM_DELETE_WINDOW", on_closing)
         self.master.geometry("500x525+350+75")
@@ -200,9 +207,10 @@ class Building(object):
             model.canvas.update()
             lift.currentFloor += lift.direction
             lift.floorsMoved += 1
+            # Model.update(self, numRemaining)
             if lift.currentFloor == numFloors - 1 or lift.currentFloor == 0:
                 lift.direction *= -1
-            time.sleep(0.1)
+            time.sleep(0.5)
         model.master.mainloop()
 
 
@@ -217,9 +225,12 @@ class Building(object):
                 if len(lift.passengers) < lift.capacity:
                     lift.passengers.append(person)
                     floorsList[lift.currentFloor].peopleOnFloor.remove(person)
-                    # print("\nPerson " + str(person.idPerson) + " got in the lift at floor " + str(
-                    # lift.currentFloor))
-                    # print("There are " + str(len(lift.passengers)) + " passenger in the lift.")
+                    # change the value of people waiting on that floor
+                    departed_num = model.departures[lift.currentFloor]
+                    model.canvas.itemconfigure(departed_num, text=str(len(floorsList[lift.currentFloor].peopleOnFloor)))
+                    model.canvas.update()
+                    print("\nPerson " + str(person.idPerson) + " got in the lift at floor " + str(lift.currentFloor))
+                    print("There are " + str(len(lift.passengers)) + " passenger in the lift.")
                 # saves searching through the remaining passengers if the lift is already full.
                 else:
                     break
@@ -230,8 +241,12 @@ class Building(object):
                 lift.passengers.remove(person)
                 peopleArrived.append(person)
                 peopleWaiting.remove(person)
-                # print("Person " + str(person.idPerson) + " got out of the lift on floor " + str(person.destFlr))
-                # print("There are " + str(len(lift.passengers)) + " passengers in the lift.")
+                # change the value of people having arrived on that floor.
+                arrive_num = model.arrivals[lift.currentFloor]
+                model.canvas.itemconfigure(arrive_num, fill="Red")
+                model.canvas.update()
+                print("Person " + str(person.idPerson) + " exited the lift on floor " + str(person.destFlr))
+                print("There are " + str(len(lift.passengers)) + " passengers in the lift.")
 
 
 class Lift(object):
