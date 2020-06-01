@@ -4,7 +4,6 @@ import random
 import time
 
 
-
 class VarEntry(Frame):
     def __init__(self, root, numFloors=10, numPeople=50, liftCapacity=6):
         self.root = root
@@ -29,30 +28,31 @@ class VarEntry(Frame):
         self.inputLiftCapacity = Entry(self.root, textvariable="", width=3)
         self.inputLiftCapacity.pack(side="left", pady=2)
 
-        # set default values
+        # assign default values
         self.numFloors = numFloors
         self.numPeople = numPeople
         self.liftCapacity = liftCapacity
         self.inputNumFloors.insert(END, numFloors)
         self.inputNumPeople.insert(END, numPeople)
         self.inputLiftCapacity.insert(END, liftCapacity)
-        # self.inputNumPeople.update()
 
+        # bind left click on run bottom to validation of user input.
         self.startBtn = Button(self.root, text="Run", fg="blue", width=5, command=self.validate)
-        # command=lambda: self.validate()
-        # self.startBtn.bind("<Button-1>", command=self.validate)
-        self.root.bind("<Return>", lambda event: self.validate())
         self.startBtn.pack(side="right", padx=4, pady=2)
+
+        # alternatively binds enter/return key to validation of user input.
+        self.root.bind("<Return>", lambda event: self.validate())
+
+        # sets window title.
         self.root.title("Data Entry Form")
+        # disables resizing of window, defaults to minimum size required to fit all elements.
         self.root.resizable(False, False)
-        # specifies position on screen with default window sizing
+        # specifies position on screen with default window sizing.
         self.root.geometry("+250+250")
+        # defines exit protocol when clicking the red x button to close the program.
         self.root.protocol("WM_DELETE_WINDOW", on_continue)
+        # continuously check for any updates made to the window and canvas.
         self.root.mainloop()
-
-        # self.liftTiles = {}
-        # self.peopleList = []
-
 
     def validate(self):
         try:
@@ -63,29 +63,29 @@ class VarEntry(Frame):
                     testCapacity = int(self.inputLiftCapacity.get())
                     if testFloors < 2 or testFloors > 25:
                         self.error.set(
-                            "The number of floors '" + str(testFloors) + "' is out of range. Please choose a number between 2 and 10.")
+                            "The number of floors '" + str(
+                                testFloors) + "' is out of range. Please choose a number between 2 and 10.")
                         print(
-                            "The number of floors '" + str(testFloors) + "' is out of range. Please choose a number between 2 and 10.")
+                            "The number of floors '" + str(
+                                testFloors) + "' is out of range. Please choose a number between 2 and 10.")
                     elif testPeople < 1 or testPeople > 50:
                         self.error.set(
-                            "The number of people '" + str(testPeople) + "' is out of range. Please choose a number between 1 and 50.")
+                            "The number of people '" + str(
+                                testPeople) + "' is out of range. Please choose a number between 1 and 50.")
                         print(
-                            "The number of people '" + str(testPeople) + "' is out of range. Please choose a number between 1 and 50.")
+                            "The number of people '" + str(
+                                testPeople) + "' is out of range. Please choose a number between 1 and 50.")
                     elif testCapacity < 1 or testCapacity > 16:
                         self.error.set(
-                            "The capacity of the lift '" + str(testCapacity) + "' is out of range. Please choose a number between 1 and 16.")
+                            "The capacity of the lift '" + str(
+                                testCapacity) + "' is out of range. Please choose a number between 1 and 16.")
                         print(
-                            "The capacity of the lift '" + str(testCapacity) + "' is out of range. Please choose a number between 1 and 16.")
+                            "The capacity of the lift '" + str(
+                                testCapacity) + "' is out of range. Please choose a number between 1 and 16.")
                     else:
                         self.numFloors = testFloors
                         self.numPeople = testPeople
                         self.liftCapacity = testCapacity
-                        # self.inputNumFloors.config(state="disabled")
-                        # self.inputNumPeople.config(state="disabled")
-                        # self.errorLabel.destroy()
-                        # self.canvas.update()
-                        # self.peopleLabel.config(text="P")
-                        # self.floorsLabel.config(text="F")
                         self.root.destroy()
                 except:
                     self.error.set("Please provide a valid input for lift capacity.")
@@ -95,11 +95,11 @@ class VarEntry(Frame):
             self.error.set("Please provide a valid input for number of floors.")
 
 
-
 class Model():
     def __init__(self, master):
         self.master = master
-        self.canvas = Canvas(self.master, width=500, height=500, borderwidth=0, highlightthickness=0,
+        self.canvas = Canvas(self.master, width=500, height=500, borderwidth=0,
+                             highlightthickness=0,
                              bg="lightblue")
         self.canvas.pack(fill="both", expand="true")
         self.canvas.delete("nums")
@@ -109,7 +109,7 @@ class Model():
         cellheight = int(round(self.canvas.winfo_reqheight() / vars.numFloors))
         for column in range(3):
             current_floor = vars.numFloors
-            if column in range(1, 3, 2):
+            if column == 1:
                 for row in range(vars.numFloors):
                     x1 = column * cellwidth
                     y1 = row * cellheight
@@ -118,11 +118,11 @@ class Model():
                     if row % 2 == 0:
                         y2 -= 1
                     self.canvas.create_line(0, y1, self.canvas.winfo_reqwidth(),
-                                                      y1, fill="BurlyWood",
-                                                      tags="divs")
+                                            y1, fill="BurlyWood",
+                                            tags="divs")
                     tile = self.canvas.create_rectangle(x1, y1, x2, y2,
-                                                            fill="NavajoWhite",
-                                                            tags="flrs")
+                                                        fill="NavajoWhite",
+                                                        tags="flrs")
                     lift.tiles[current_floor - 1] = tile
                     current_floor -= 1
             elif column in range(0, 3, 2):
@@ -139,10 +139,13 @@ class Model():
                                             fill="CadetBlue",
                                             font=('Arial', -round(cellheight // 2)))
                     floor_num += 1
-        self.update(vars.numPeople)
-        print(lift.tiles)
+        self.master.title("Lift Manager")
+        self.master.protocol("WM_DELETE_WINDOW", on_closing)
+        self.master.geometry("500x525+350+75")
+        self.master.resizable(False, False)
+        self.master.update()
 
-
+    """
     def update(self, numRemaining):
         self.peopleRemaining = Label(self.master, text="People remaining: " + str(numRemaining))
         self.peopleRemaining.pack(side="left")
@@ -150,21 +153,17 @@ class Model():
             lift.floorsMoved))
         self.floorsMoved.pack(side="left")
         self.master.update()
-
+    """
 
 
 class Building(object):
     def __init__(self):
         Building.move(self)
 
-
     def move(self):
         while len(peopleWaiting) > 0:
-            time.sleep(0.1)
             print("\nThe lift is on floor: " + str(lift.currentFloor))
-            Building.collect(self)
-            Building.deliver(self)
-            if not ((lift.currentFloor == numFloors -1) or (lift.currentFloor == 0)):
+            if not ((lift.currentFloor == numFloors - 1) or (lift.currentFloor == 0)):
                 try:
                     tile = lift.tiles[lift.currentFloor - lift.direction]
                     model.canvas.itemconfigure(tile, fill="NavajoWhite")
@@ -175,6 +174,11 @@ class Building(object):
                 tile = lift.tiles[lift.currentFloor + lift.direction]
                 model.canvas.itemconfigure(tile, fill="NavajoWhite")
                 model.canvas.update()
+            # people are delivered before collecting others on the same floor
+            # to ensure optimal transportation as they must be travelling to
+            # a floor different from their origin, this frees up lift space.
+            Building.deliver(self)
+            Building.collect(self)
             tile = lift.tiles[lift.currentFloor]
             model.canvas.itemconfigure(tile, fill="LightPink")
             model.canvas.update()
@@ -182,8 +186,8 @@ class Building(object):
             lift.floorsMoved += 1
             if lift.currentFloor == numFloors - 1 or lift.currentFloor == 0:
                 lift.direction *= -1
-
-
+            time.sleep(0.1)
+        model.master.mainloop()
 
     def collect(self):
         for person in floorsList[lift.currentFloor].peopleOnFloor:
@@ -191,17 +195,17 @@ class Building(object):
             # adds waiting passengers to the lift if travelling in the direction of the lift.
             if person.direction == lift.direction:
                 People.destination(person)
-                #print("\nPerson " + str(person.idPerson) + " started on floor " +  str(person.originFlr) + " travelling in direction " + str(person.direction) + " to floor " + str(person.destFlr))
+                # print("\nPerson " + str(person.idPerson) + " started on floor " +  str(person.originFlr) + " travelling in direction " + str(person.direction) + " to floor " + str(person.destFlr))
                 # add as many passenger as possible before the lift becomes full.
                 if len(lift.passengers) < lift.capacity:
                     lift.passengers.append(person)
                     floorsList[lift.currentFloor].peopleOnFloor.remove(person)
-                    #print("\nPerson " + str(person.idPerson) + " got in the lift at floor " + str(
-                        #lift.currentFloor))
-                    #print("There are " + str(len(lift.passengers)) + " passenger in the lift.")
+                    # print("\nPerson " + str(person.idPerson) + " got in the lift at floor " + str(
+                    # lift.currentFloor))
+                    # print("There are " + str(len(lift.passengers)) + " passenger in the lift.")
+                # saves searching through the remaining passengers if the lift is already full.
                 else:
                     break
-
 
     def deliver(self):
         for person in lift.passengers:
@@ -209,9 +213,8 @@ class Building(object):
                 lift.passengers.remove(person)
                 peopleArrived.append(person)
                 peopleWaiting.remove(person)
-                #print("Person " + str(person.idPerson) + " got out of the lift on floor " + str(person.destFlr))
-                #print("There are " + str(len(lift.passengers)) + " passengers in the lift.")
-
+                # print("Person " + str(person.idPerson) + " got out of the lift on floor " + str(person.destFlr))
+                # print("There are " + str(len(lift.passengers)) + " passengers in the lift.")
 
 
 class Lift(object):
@@ -224,28 +227,28 @@ class Lift(object):
         self.tiles = {}
 
 
-
 class People(object):
     def __init__(self, topFloor, personId):
         self.idPerson = personId
         self.flrsPassed = 0
         self.originFlr = random.randint(0, topFloor)
 
+        # if the person is on the top floor then they must travel down.
         if self.originFlr == topFloor:
             self.direction = -1
+        # if the person is on the bottom floor then they must be travelling up.
         elif self.originFlr == 0:
             self.direction = 1
+        # randomly selects whether the passenger is travelling up or down
         else:
-            # randomly selects whether the passenger is travelling up or down
             self.direction = random.choice([-1, 1])
         # print("\n"+str(self.originFlr))
         # print(self.direction)
         # print(self.destFlr)
 
-
     def destination(self):
         # A destination floor is generated based on whether the passenger is
-        # travelling up or down where only the applicable floors will be chosen.
+        # travelling up or down where only an applicable floors will be chosen.
         if self.direction == 1:
             # direction 1 shows the passenger wishes to travel to a higher floor
             selection = list(range(self.originFlr + 1, numFloors))
@@ -256,14 +259,13 @@ class People(object):
         self.destFlr = random.choice(selection)
 
 
-
 class Floors(object):
     def __init__(self, peopleWaiting, floorId):
         self.idFloor = floorId
         self.count = 0
         self.peopleOnFloor = Floors.assign(self, peopleWaiting)
-        print("Floor " + str(self.idFloor) + " has " + str(len(self.peopleOnFloor)) + " passengers waiting.")
-
+        print("Floor " + str(self.idFloor) + " has " + str(
+            len(self.peopleOnFloor)) + " passengers waiting.")
 
     def assign(self, peopleWaiting):
         self.peopleOnFloor = []
@@ -271,7 +273,6 @@ class Floors(object):
             if k.originFlr == floorId:
                 self.peopleOnFloor.append(k)
         return self.peopleOnFloor
-
 
 
 def on_continue():
@@ -282,8 +283,8 @@ def on_continue():
 
 def on_closing():
     if messagebox.askokcancel("Exit program", "Do you want to quit?"):
+        Building.wait = 0
         master.destroy()
-
 
 
 if __name__ == "__main__":
@@ -293,7 +294,6 @@ if __name__ == "__main__":
     vars = VarEntry(root)
     # master is the animation window
     master = Tk()
-
     # creates the lift object and add the index of tiles to a dictionary
     lift = Lift()
 
@@ -317,12 +317,3 @@ if __name__ == "__main__":
 
     Building()
     # print("The lift has travelled " + str(lift.floorsMoved) + " floors.")
-
-    master.title("Lift Manager")
-    master.protocol("WM_DELETE_WINDOW", on_closing)
-    master.geometry("500x525+525+15")
-    master.resizable(False, False)
-    master.mainloop()
-
-
-
