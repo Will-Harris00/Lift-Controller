@@ -2,20 +2,35 @@ from tkinter import *
 import random
 
 
-#class building(object):
-   #def __init__(self, lift):
+class Building(object):
+    def __init__(self):
+        Building.move(self)
+
+    def move(self):
+        for i in range(20):
+            Building.check(self)
+            if lift.liftFloor == numFloors - 1 or 0:
+                lift.direction *= -1
+                lift.liftFloor += lift.direction
+            else:
+                lift.liftFloor += lift.direction
 
 
+    def check(self):
+        for person in floorsList[lift.liftFloor - 1].peopleOnFloor:
+            print(person.idPerson)
+            print(person)
 
-class lift(object):
+
+class Lift(object):
     def __init__(self):
         self.capacity = 6
         self.liftFloor = 1
-        self.direction = "UP"
+        self.direction = 1
         self.passenger = []
 
 
-class people(object):
+class People(object):
     def __init__(self, numFloors, personId):
         selection = []
         start = random.randint(0, numFloors)
@@ -29,17 +44,17 @@ class people(object):
             self.direction = "DOWN"
         self.originFlr = start
         self.destFlr = end
-        print("\n"+str(self.originFlr))
-        print(self.direction)
-        print(self.destFlr)
+        # print("\n"+str(self.originFlr))
+        # print(self.direction)
+        # print(self.destFlr)
 
-class floors(object):
+
+class Floors(object):
     def __init__(self, peopleList, floorId):
         self.idFloor = floorId
         self.count = 0
-        self.peopleOnFloor = floors.assign(self, peopleList)
-        print(self.idFloor)
-        print(self.peopleOnFloor)
+        self.peopleOnFloor = Floors.assign(self, peopleList)
+        print("Number of people on floor " + str(self.idFloor) + " is " + str(len(self.peopleOnFloor)))
 
     def assign(self, peopleList):
         self.peopleOnFloor = []
@@ -58,12 +73,16 @@ if __name__ == "__main__":
     floorsList = []
     numFloors = 10
     numPeople = 20
-    for personId  in range(0, numPeople):
-        peopleList.append(people(numFloors - 1, personId))
-    print(peopleList)
+    for personId in range(0, numPeople):
+        peopleList.append(People(numFloors - 1, personId))
+    # print(peopleList)
 
     for floorId in range(0, numFloors):
-        floorsList.append(floors(peopleList, floorId))
-    print(floorsList[0].idFloor)
-    print(floorsList[0].peopleOnFloor)
+        floorsList.append(Floors(peopleList, floorId))
+    # print(floorsList[numFloors - 1].idFloor)
+    # print(floorsList[numFloors - 1].peopleOnFloor)
+    lift = Lift()
+    Building()
+
+
 
