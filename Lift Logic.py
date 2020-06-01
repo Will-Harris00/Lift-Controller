@@ -1,7 +1,8 @@
 from tkinter import *
 import random
 
-
+# check passenger entering the lift are travelling in the direction of the lift.
+# add all passenger of a floor to the lift if travelling in the same direction.
 class Building(object):
     def __init__(self):
         Building.move(self)
@@ -17,8 +18,20 @@ class Building(object):
                 lift.liftFloor += lift.direction
 
     def check(self):
+        self.freeSpaces = lift.capacity - len(lift.passengers)
         for person in floorsList[lift.liftFloor].peopleOnFloor:
-            print(person.idPerson)
+            for x in range(self.freeSpaces):
+                if (self.freeSpaces > 0) and (len(floorsList[lift.liftFloor].peopleOnFloor) > 0):
+                    Building.algorithm(self)
+            print("\nPerson " + str(person.idPerson) + " got in the lift at floor "  + str(lift.liftFloor))
+
+    def algorithm(self):
+        passenger = random.choice(floorsList[lift.liftFloor].peopleOnFloor)
+        lift.passengers.append(passenger)
+        floorsList[lift.liftFloor].peopleOnFloor.remove(passenger)
+        print(passenger.idPerson)
+
+
 
 
 class Lift(object):
@@ -26,7 +39,7 @@ class Lift(object):
         self.capacity = 6
         self.liftFloor = 0
         self.direction = -1
-        self.passenger = []
+        self.passengers = []
 
 
 class People(object):
@@ -38,9 +51,11 @@ class People(object):
         end = random.choice(selection)
         self.idPerson = personId
         if end > start:
-            self.direction = "UP"
+            # direction 1 shows the passenger wishes to travel to a higher floor
+            self.direction = 1
         else:
-            self.direction = "DOWN"
+            # direction -1 show the passenger wishes to travel to a lower floor
+            self.direction = -1
         self.originFlr = start
         self.destFlr = end
         # print("\n"+str(self.originFlr))
