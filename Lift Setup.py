@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 import random
+import time
 
 
 class VarEntry(Frame):
@@ -96,15 +97,14 @@ class VarEntry(Frame):
 class Structure():
     def __init__(self, master):
         self.master = master
-
-        self.canvas = Canvas(self.master, borderwidth=0, highlightthickness=0,
+        self.canvas = Canvas(self.master, width=500, height=500, borderwidth=0, highlightthickness=0,
                              bg="lightblue")
         self.canvas.pack(fill="both", expand="true")
         self.canvas.delete("nums")
         self.canvas.delete("flrs")
         self.canvas.delete("divs")
-        cellwidth = int(self.canvas.winfo_width() / 3)
-        cellheight = int(round(self.canvas.winfo_height() / vars.numFloors))
+        cellwidth = int(self.canvas.winfo_reqwidth() / 3)
+        cellheight = int(round(self.canvas.winfo_reqheight() / vars.numFloors))
         for column in range(3):
             current_floor = vars.numFloors
             if column in range(1, 3, 2):
@@ -115,7 +115,7 @@ class Structure():
                     y2 = y1 + cellheight
                     if row % 2 == 0:
                         y2 -= 1
-                    self.canvas.create_line(0, y1, self.canvas.winfo_width(),
+                    self.canvas.create_line(0, y1, self.canvas.winfo_reqwidth(),
                                                       y1, fill="burlywood",
                                                       tags="divs")
                     liftPosition = self.canvas.create_rectangle(x1, y1, x2, y2,
@@ -271,22 +271,20 @@ if __name__ == "__main__":
     numFloors = vars.numFloors
     numPeople = vars.numPeople
 
-    for personId in range(0, numPeople):
-        peopleWaiting.append(People(numFloors - 1, personId))
+    # for personId in range(0, numPeople):
+        # peopleWaiting.append(People(numFloors - 1, personId))
     # print(peopleWaiting)
 
-    for floorId in range(0, numFloors):
-        floorsList.append(Floors(peopleWaiting, floorId))
+    # for floorId in range(0, numFloors):
+        # floorsList.append(Floors(peopleWaiting, floorId))
     # print(floorsList[numFloors - 1].idFloor)
     # print(floorsList[numFloors - 1].peopleOnFloor)
-
-    Building()
+    # Building()
     # print("The lift has travelled " + str(lift.floorsMoved) + " floors.")
-
 
     master.title("Lift Manager")
     master.protocol("WM_DELETE_WINDOW", on_closing)
-    master.geometry("600x625+525+15")
+    master.geometry("500x525+525+15")
     master.resizable(False, False)
     master.mainloop()
 
