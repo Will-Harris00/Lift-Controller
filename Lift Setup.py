@@ -5,7 +5,7 @@ import time
 
 
 class VarEntry(Frame):
-    def __init__(self, root, numFloors=10, numPeople=50, liftCapacity=6, **kw):
+    def __init__(self, root, numFloors=10, numPeople=50, liftCapacity=6, delay=0.35, **kw):
         super().__init__(**kw)
         self.root = root
 
@@ -29,13 +29,20 @@ class VarEntry(Frame):
         self.inputLiftCapacity = Entry(self.root, textvariable="", width=3)
         self.inputLiftCapacity.pack(side="left", pady=2)
 
+        self.delayLabel = Label(self.root, text="Delay Secs: ")
+        self.delayLabel.pack(side="left", padx=4, pady=2)
+        self.inputDelay = Entry(self.root, textvariable="", width=4)
+        self.inputDelay.pack(side="left", pady=2)
+
         # assign default values
         self.numFloors = numFloors
         self.numPeople = numPeople
         self.liftCapacity = liftCapacity
+        self.delay = delay
         self.inputNumFloors.insert(END, numFloors)
         self.inputNumPeople.insert(END, numPeople)
         self.inputLiftCapacity.insert(END, liftCapacity)
+        self.inputDelay.insert(END, delay)
 
         # bind left click on run bottom to validation of user input.
         self.startBtn = Button(self.root, text="Run", fg="blue", width=5, command=self.validate)
@@ -62,32 +69,44 @@ class VarEntry(Frame):
                 testPeople = int(self.inputNumPeople.get())
                 try:
                     testCapacity = int(self.inputLiftCapacity.get())
-                    if testFloors < 2 or testFloors > 25:
-                        self.error.set(
-                            "The number of floors '" + str(
-                                testFloors) + "' is out of range. Please choose a number between 2 and 10.")
-                        print(
-                            "The number of floors '" + str(
-                                testFloors) + "' is out of range. Please choose a number between 2 and 10.")
-                    elif testPeople < 1 or testPeople > 50:
-                        self.error.set(
-                            "The number of people '" + str(
-                                testPeople) + "' is out of range. Please choose a number between 1 and 50.")
-                        print(
-                            "The number of people '" + str(
-                                testPeople) + "' is out of range. Please choose a number between 1 and 50.")
-                    elif testCapacity < 1 or testCapacity > 16:
-                        self.error.set(
-                            "The capacity of the lift '" + str(
-                                testCapacity) + "' is out of range. Please choose a number between 1 and 16.")
-                        print(
-                            "The capacity of the lift '" + str(
-                                testCapacity) + "' is out of range. Please choose a number between 1 and 16.")
-                    else:
-                        self.numFloors = testFloors
-                        self.numPeople = testPeople
-                        self.liftCapacity = testCapacity
-                        self.root.destroy()
+                    try:
+                        testDelay = float(self.inputDelay.get())
+                        if testFloors < 2 or testFloors > 25:
+                            self.error.set(
+                                "The number of floors '" + str(
+                                    testFloors) + "' is out of range. Please choose a number between 2 and 10.")
+                            print(
+                                "The number of floors '" + str(
+                                    testFloors) + "' is out of range. Please choose a number between 2 and 10.")
+                        elif testPeople < 1 or testPeople > 50:
+                            self.error.set(
+                                "The number of people '" + str(
+                                    testPeople) + "' is out of range. Please choose a number between 1 and 50.")
+                            print(
+                                "The number of people '" + str(
+                                    testPeople) + "' is out of range. Please choose a number between 1 and 50.")
+                        elif testCapacity < 1 or testCapacity > 16:
+                            self.error.set(
+                                "The capacity of the lift '" + str(
+                                    testCapacity) + "' is out of range. Please choose a number between 1 and 16.")
+                            print(
+                                "The capacity of the lift '" + str(
+                                    testCapacity) + "' is out of range. Please choose a number between 1 and 16.")
+                        elif testDelay < 0 or testDelay > 2:
+                            self.error.set(
+                                "The animation delay '" + str(
+                                    testDelay) + "' is out of range. Please choose a number between 0 and 2 seconds.")
+                            print(
+                                "The animation delay '" + str(
+                                    testDelay) + "' is out of range. Please choose a number between 0 and 2 seconds.")
+                        else:
+                            self.numFloors = testFloors
+                            self.numPeople = testPeople
+                            self.liftCapacity = testCapacity
+                            self.delay = testDelay
+                            self.root.destroy()
+                    except:
+                        self.error.set("Please provide a valid input for animation delay.")
                 except:
                     self.error.set("Please provide a valid input for lift capacity.")
             except:
@@ -193,7 +212,7 @@ class Building(object):
             tile = lift.tiles[lift.currentFloor]
             model.canvas.itemconfigure(tile, fill="Pink")
             model.canvas.update()
-            time.sleep(0.5)
+            time.sleep(vars.delay)
             # people are delivered before collecting others on the same floor
             # to ensure optimal transportation as they must be travelling to
             # a floor different from their origin, this frees up lift space.
@@ -233,7 +252,7 @@ class Building(object):
                         tile = lift.tiles[lift.currentFloor]
                         model.canvas.itemconfigure(tile, fill="ForestGreen")
                         model.canvas.update()
-                        time.sleep(0.1)
+                        time.sleep(vars.delay/5)
                         model.canvas.itemconfigure(tile, fill="Pink")
                         model.canvas.update()
                         waiting[lift.currentFloor].remove(person)
@@ -241,7 +260,7 @@ class Building(object):
                         departed_num = model.departures[lift.currentFloor]
                         model.canvas.itemconfigure(departed_num, text=str(len(waiting[lift.currentFloor])))
                         model.canvas.update()
-                        time.sleep(0.25)
+                        time.sleep(vars.delay/2)
                         if len(waiting[lift.currentFloor]) == 0:
                             del waiting[lift.currentFloor]
                         print("\nPerson " + str(person.id) + " got in the lift at floor " + str(lift.currentFloor))
@@ -261,7 +280,7 @@ class Building(object):
                 tile = lift.tiles[lift.currentFloor]
                 model.canvas.itemconfigure(tile, fill="Orange")
                 model.canvas.update()
-                time.sleep(0.1)
+                time.sleep(vars.delay/5)
                 model.canvas.itemconfigure(tile, fill="Pink")
                 model.canvas.update()
                 lift.passengers.remove(person)
@@ -269,7 +288,7 @@ class Building(object):
                 arrive_num = model.arrivals[lift.currentFloor]
                 model.canvas.itemconfigure(arrive_num, text=str(len(delivered[lift.currentFloor])))
                 model.canvas.update()
-                time.sleep(0.25)
+                time.sleep(vars.delay/2)
                 print("Person " + str(person.id) + " exited the lift on floor " + str(person.destFlr))
                 print("There are " + str(len(lift.passengers)) + " passengers in the lift.")
 
