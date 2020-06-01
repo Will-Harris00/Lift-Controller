@@ -1,7 +1,6 @@
 from tkinter import *
 import random
 
-# check passenger entering the lift are travelling in the direction of the lift.
 # add all passenger of a floor to the lift if travelling in the same direction.
 class Building(object):
     def __init__(self):
@@ -16,10 +15,13 @@ class Building(object):
                 print("\nThe lift is on floor: " + str(lift.liftFloor))
                 Building.check(self)
                 lift.liftFloor += lift.direction
+                lift.floorsMoved += 1
 
     def check(self):
         for person in floorsList[lift.liftFloor].peopleOnFloor:
-            Building.algorithm(self, person)
+            print("Person is travelling in direction: " + str(person.direction) + " the lift direction is: " + str(lift.direction))
+            if person.direction == lift.direction:
+                Building.algorithm(self, person)
 
     def algorithm(self, person):
         if len(lift.passengers) < lift.capacity:
@@ -33,6 +35,7 @@ class Lift(object):
         self.capacity = 6
         self.liftFloor = 0
         self.direction = -1
+        self.floorsMoved = -1
         self.passengers = []
 
 
@@ -58,15 +61,15 @@ class People(object):
 
 
 class Floors(object):
-    def __init__(self, peopleList, floorId):
+    def __init__(self, peopleWaiting, floorId):
         self.idFloor = floorId
         self.count = 0
-        self.peopleOnFloor = Floors.assign(self, peopleList)
+        self.peopleOnFloor = Floors.assign(self, peopleWaiting)
         print("Floor " + str(self.idFloor) + " has " + str(len(self.peopleOnFloor)) + " passengers waiting.")
 
-    def assign(self, peopleList):
+    def assign(self, peopleWaiting):
         self.peopleOnFloor = []
-        for k in peopleList:
+        for k in peopleWaiting:
             if k.originFlr == floorId:
                 self.peopleOnFloor.append(k)
         return self.peopleOnFloor
@@ -76,20 +79,22 @@ class Floors(object):
 if __name__ == "__main__":
     master = Tk()
     liftTiles = {}
-    peopleList = []
+    peopleWaiting = []
+    peopleArrived = []
     floorsList = []
     numFloors = 10
     numPeople = 20
     for personId in range(0, numPeople):
-        peopleList.append(People(numFloors - 1, personId))
-    # print(peopleList)
+        peopleWaiting.append(People(numFloors - 1, personId))
+    # print(peopleWaiting)
 
     for floorId in range(0, numFloors):
-        floorsList.append(Floors(peopleList, floorId))
+        floorsList.append(Floors(peopleWaiting, floorId))
     # print(floorsList[numFloors - 1].idFloor)
     # print(floorsList[numFloors - 1].peopleOnFloor)
     lift = Lift()
     Building()
+    print("The lift has travelled " + str(lift.floorsMoved) + " floors.")
 
 
 
