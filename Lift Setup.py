@@ -146,9 +146,9 @@ class Model():
                         except KeyError:
                             num_waiting =  0
                         departed_num = self.canvas.create_text(cellwidth - 3, y2 + 3, anchor="ne",
-                                                               text=str(num_waiting),
-                                                               fill="CadetBlue",
-                                                               font=('Arial', -round(cellheight // 2)))
+                                                text=str(num_waiting),
+                                                fill="Crimson",
+                                                font=('Arial', -round(cellheight // 2)))
                         self.departures[floor_num] = departed_num
                         # print("Depart number: " + str(departed_num))
                     elif column == 2:
@@ -157,9 +157,9 @@ class Model():
                             y1 -= 1
                         y2 = y1 - (cellheight // 1.5)
                         arrived_num = self.canvas.create_text((cellwidth * column) + 3, y2 + 3, anchor="nw",
-                                                              text="0",
-                                                              fill="CadetBlue",
-                                                              font=('Arial', -round(cellheight // 2)))
+                                                text="0",
+                                                fill="DodgerBlue",
+                                                font=('Arial', -round(cellheight // 2)))
                         self.arrivals[floor_num] = arrived_num
                         # print("Arrive number: " + str(arrived_num))
                     floor_num += 1
@@ -190,31 +190,32 @@ class Building(object):
     def move(self):
         while len(waiting) > 0 or len(lift.passengers) > 0:
             print("\nThe lift is on floor: " + str(lift.currentFloor))
-            if not ((lift.currentFloor == numFloors - 1) or (lift.currentFloor == 0)):
-                try:
-                    tile = lift.tiles[lift.currentFloor - lift.direction]
-                    model.canvas.itemconfigure(tile, fill="NavajoWhite")
-                    model.canvas.update()
-                except KeyError:
-                    pass
-            else:
-                tile = lift.tiles[lift.currentFloor + lift.direction]
-                model.canvas.itemconfigure(tile, fill="NavajoWhite")
-                model.canvas.update()
+            tile = lift.tiles[lift.currentFloor]
+            model.canvas.itemconfigure(tile, fill="Pink")
+            model.canvas.update()
+            time.sleep(0.5)
             # people are delivered before collecting others on the same floor
             # to ensure optimal transportation as they must be travelling to
             # a floor different from their origin, this frees up lift space.
             Building.deliver(self)
             Building.collect(self)
+
             tile = lift.tiles[lift.currentFloor]
-            model.canvas.itemconfigure(tile, fill="LightPink")
+            model.canvas.itemconfigure(tile, fill="NavajoWhite")
             model.canvas.update()
+            fin_position = lift.currentFloor
             lift.currentFloor += lift.direction
             lift.floorsMoved += 1
             # Model.update(self, numRemaining)
             if lift.currentFloor == numFloors - 1 or lift.currentFloor == 0:
                 lift.direction *= -1
-            time.sleep(0.6)
+        # need to remove the one extra move counted
+        # because the while loop runs to completion.
+        lift.floorsMoved -= 1
+        # display the final floor the list ends on.
+        tile = lift.tiles[fin_position]
+        model.canvas.itemconfigure(tile, fill="Pink")
+        model.canvas.update()
         model.master.mainloop()
 
 
@@ -229,12 +230,18 @@ class Building(object):
                     # add as many passenger as possible before the lift becomes full.
                     if len(lift.passengers) < lift.capacity:
                         lift.passengers.append(person)
+                        tile = lift.tiles[lift.currentFloor]
+                        model.canvas.itemconfigure(tile, fill="ForestGreen")
+                        model.canvas.update()
+                        time.sleep(0.1)
+                        model.canvas.itemconfigure(tile, fill="Pink")
+                        model.canvas.update()
                         waiting[lift.currentFloor].remove(person)
                         # change the value of people waiting on that floor
                         departed_num = model.departures[lift.currentFloor]
                         model.canvas.itemconfigure(departed_num, text=str(len(waiting[lift.currentFloor])))
                         model.canvas.update()
-                        time.sleep(0.2)
+                        time.sleep(0.25)
                         if len(waiting[lift.currentFloor]) == 0:
                             del waiting[lift.currentFloor]
                         print("\nPerson " + str(person.id) + " got in the lift at floor " + str(lift.currentFloor))
@@ -251,12 +258,18 @@ class Building(object):
                 if person.destFlr not in delivered:
                     delivered[person.destFlr] = []
                 delivered[person.destFlr].append(person)
+                tile = lift.tiles[lift.currentFloor]
+                model.canvas.itemconfigure(tile, fill="Orange")
+                model.canvas.update()
+                time.sleep(0.1)
+                model.canvas.itemconfigure(tile, fill="Pink")
+                model.canvas.update()
                 lift.passengers.remove(person)
                 # change the value of people having arrived on that floor.
                 arrive_num = model.arrivals[lift.currentFloor]
                 model.canvas.itemconfigure(arrive_num, text=str(len(delivered[lift.currentFloor])))
                 model.canvas.update()
-                time.sleep(0.2)
+                time.sleep(0.25)
                 print("Person " + str(person.id) + " exited the lift on floor " + str(person.destFlr))
                 print("There are " + str(len(lift.passengers)) + " passengers in the lift.")
 
