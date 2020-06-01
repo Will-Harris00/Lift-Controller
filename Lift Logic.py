@@ -8,34 +8,32 @@ class Building(object):
 
     def move(self):
         for i in range(22):
-            if lift.liftFloor > numFloors - 1 or lift.liftFloor < 0:
+            print("\nThe lift is on floor: " + str(lift.currentFloor))
+            Building.check(self)
+            lift.currentFloor += lift.direction
+            lift.floorsMoved += 1
+            if lift.currentFloor == numFloors - 1 or lift.currentFloor == 0:
                 lift.direction *= -1
-                lift.liftFloor += lift.direction * 2
-            else:
-                print("\nThe lift is on floor: " + str(lift.liftFloor))
-                Building.check(self)
-                lift.liftFloor += lift.direction
-                lift.floorsMoved += 1
 
     def check(self):
-        for person in floorsList[lift.liftFloor].peopleOnFloor:
-            print("Person is travelling in direction: " + str(person.direction) + " the lift direction is: " + str(lift.direction))
+        for person in floorsList[lift.currentFloor].peopleOnFloor:
+            print("Person " + str(person.idPerson) + " is travelling in direction: " + str(person.direction) + " the lift direction is: " + str(lift.direction))
             if person.direction == lift.direction:
                 Building.algorithm(self, person)
 
     def algorithm(self, person):
         if len(lift.passengers) < lift.capacity:
             lift.passengers.append(person)
-            floorsList[lift.liftFloor].peopleOnFloor.remove(person)
+            floorsList[lift.currentFloor].peopleOnFloor.remove(person)
             print("Person " + str(person.idPerson) + " got in the lift at floor " + str(
-                lift.liftFloor))
+                lift.currentFloor))
 
 class Lift(object):
     def __init__(self):
         self.capacity = 6
-        self.liftFloor = 0
-        self.direction = -1
-        self.floorsMoved = -1
+        self.currentFloor = 0
+        self.direction = 1
+        self.floorsMoved = 0
         self.passengers = []
 
 
