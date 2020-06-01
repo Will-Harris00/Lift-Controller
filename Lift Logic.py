@@ -13,32 +13,20 @@ class Building(object):
                 lift.direction *= -1
                 lift.liftFloor += lift.direction * 2
             else:
-                print("The lift is on floor: " + str(lift.liftFloor))
+                print("\nThe lift is on floor: " + str(lift.liftFloor))
                 Building.check(self)
                 lift.liftFloor += lift.direction
 
     def check(self):
-        while len(lift.passengers) < lift.capacity:
-            print("num passenger " + str(len(lift.passengers)))
-            print("capacity " + str(lift.capacity))
-            while len(floorsList[lift.liftFloor].peopleOnFloor) != 0:
-                Building.algorithm(self)
-                print("extra len " + str(len(floorsList[lift.liftFloor].peopleOnFloor)))
-            break
-        print("The lift is full.")
-
-    def algorithm(self):
         for person in floorsList[lift.liftFloor].peopleOnFloor:
-            print(person.idPerson)
-            print("\nPerson " + str(person.idPerson) + " got in the lift at floor " + str(
-                lift.liftFloor))
+            Building.algorithm(self, person)
+
+    def algorithm(self, person):
+        if len(lift.passengers) < lift.capacity:
             lift.passengers.append(person)
-            print("before len " + str(len(floorsList[lift.liftFloor].peopleOnFloor)))
             floorsList[lift.liftFloor].peopleOnFloor.remove(person)
-            print("after len " + str(len(floorsList[lift.liftFloor].peopleOnFloor)))
-
-
-
+            print("Person " + str(person.idPerson) + " got in the lift at floor " + str(
+                lift.liftFloor))
 
 class Lift(object):
     def __init__(self):
