@@ -184,7 +184,7 @@ class Building(object):
         Building.move(self)
 
     def move(self):
-        while len(waiting) > 0:
+        while len(waiting) > 0 or len(lift.passengers) > 0:
             print("\nThe lift is on floor: " + str(lift.currentFloor))
             if not ((lift.currentFloor == numFloors - 1) or (lift.currentFloor == 0)):
                 try:
@@ -210,44 +210,48 @@ class Building(object):
             # Model.update(self, numRemaining)
             if lift.currentFloor == numFloors - 1 or lift.currentFloor == 0:
                 lift.direction *= -1
-            time.sleep(2)
+            time.sleep(0.1)
         model.master.mainloop()
 
 
     def collect(self):
-        for id, person in waiting[lift.currentFloor].items():
-            # print("Person " + str(person.idPerson) + " is travelling in direction: " + str(person.direction) + " the lift direction is: " + str(lift.direction))
-            # adds waiting passengers to the lift if travelling in the direction of the lift.
-            print(person)
-            if person.direction == lift.direction:
-                People.destination(person)
-                # print("\nPerson " + str(person.idPerson) + " started on floor " +  str(person.originFlr) + " travelling in direction " + str(person.direction) + " to floor " + str(person.destFlr))
-                # add as many passenger as possible before the lift becomes full.
-                if len(lift.passengers) < lift.capacity:
-                    lift.passengers.append(person)
-                    del waiting[lift.currentFloor][person.id]
-                    # change the value of people waiting on that floor
-                    departed_num = model.departures[lift.currentFloor]
-                    model.canvas.itemconfigure(departed_num, text=str(len(waiting[lift.currentFloor])))
-                    model.canvas.update()
-                    print("\nPerson " + str(person.id) + " got in the lift at floor " + str(lift.currentFloor))
-                    print("There are " + str(len(lift.passengers)) + " passenger in the lift.")
-                # saves searching through the remaining passengers if the lift is already full.
-                else:
-                    break
+        try:
+            for person in waiting[lift.currentFloor]:
+                # print("Person " + str(person.idPerson) + " is travelling in direction: " + str(person.direction) + " the lift direction is: " + str(lift.direction))
+                # adds waiting passengers to the lift if travelling in the direction of the lift.
+                if person.direction == lift.direction:
+                    People.destination(person)
+                    # print("\nPerson " + str(person.idPerson) + " started on floor " +  str(person.originFlr) + " travelling in direction " + str(person.direction) + " to floor " + str(person.destFlr))
+                    # add as many passenger as possible before the lift becomes full.
+                    if len(lift.passengers) < lift.capacity:
+                        lift.passengers.append(person)
+                        waiting[lift.currentFloor].remove(person)
+                        # change the value of people waiting on that floor
+                        departed_num = model.departures[lift.currentFloor]
+                        model.canvas.itemconfigure(departed_num, text=str(len(waiting[lift.currentFloor])))
+                        model.canvas.update()
+                        if len(waiting[lift.currentFloor]) == 0:
+                            del waiting[lift.currentFloor]
+                        print("\nPerson " + str(person.id) + " got in the lift at floor " + str(lift.currentFloor))
+                        print("There are " + str(len(lift.passengers)) + " passenger in the lift.")
+                    # saves searching through the remaining passengers if the lift is already full.
+                    else:
+                        break
+        except:
+            pass
 
     def deliver(self):
         for person in lift.passengers:
             if person.destFlr == lift.currentFloor:
                 if person.destFlr not in delivered:
-                    delivered[person.destFlr] = {}
-                delivered[person.destFlr].update({person.id: person})
+                    delivered[person.destFlr] = []
+                delivered[person.destFlr].append(person)
                 lift.passengers.remove(person)
                 # change the value of people having arrived on that floor.
                 arrive_num = model.arrivals[lift.currentFloor]
                 model.canvas.itemconfigure(arrive_num, text=str(len(delivered[lift.currentFloor])))
                 model.canvas.update()
-                print("Person " + str(person.idPerson) + " exited the lift on floor " + str(person.destFlr))
+                print("Person " + str(person.id) + " exited the lift on floor " + str(person.destFlr))
                 print("There are " + str(len(lift.passengers)) + " passengers in the lift.")
 
 
@@ -295,8 +299,8 @@ class People(object):
 
 def assign(person):
     if person.originFlr not in waiting:
-        waiting[person.originFlr] = {}
-    waiting[person.originFlr].update({person.id : person})
+        waiting[person.originFlr] = []
+    waiting[person.originFlr].append(person)
 
 
 """
