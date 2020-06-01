@@ -5,7 +5,7 @@ import time
 
 
 class VarEntry(Frame):
-    def __init__(self, root, numFloors=10, numPeople=50, liftCapacity=6, delay=0.35, **kw):
+    def __init__(self, root, numFloors=10, numPeople=50, liftCapacity=6, delay=0.5, **kw):
         super().__init__(**kw)
         self.root = root
 
@@ -16,12 +16,12 @@ class VarEntry(Frame):
 
         self.floorsLabel = Label(self.root, text="Floors: ")
         self.floorsLabel.pack(side="left")
-        self.inputNumFloors = Entry(self.root, textvariable="", width=3)
+        self.inputNumFloors = Entry(self.root, textvariable="", width=5)
         self.inputNumFloors.pack(side="left")
 
         self.peopleLabel = Label(self.root, text="People: ")
         self.peopleLabel.pack(side="left", padx=4, pady=2)
-        self.inputNumPeople = Entry(self.root, textvariable="", width=3)
+        self.inputNumPeople = Entry(self.root, textvariable="", width=8)
         self.inputNumPeople.pack(side="left", pady=2)
 
         self.capacityLabel = Label(self.root, text="Lift Capacity: ")
@@ -48,6 +48,13 @@ class VarEntry(Frame):
         self.startBtn = Button(self.root, text="Run", fg="blue", width=5, command=self.validate)
         self.startBtn.pack(side="right", padx=4, pady=2)
 
+        # radio button selector to animate simulation
+        self.animate = BooleanVar()
+        self.animateRadio = Radiobutton(self.root, text="No", variable=self.animate, value=False).pack(side="right")
+        self.animateRadio = Radiobutton(self.root, text="Yes", variable=self.animate, value=True).pack(side="right")
+        self.animateLabel = Label(self.root, text="Animate Simulation: ")
+        self.animateLabel.pack(side="right", padx=4, pady=2)
+
         # alternatively binds enter/return key to validation of user input.
         self.root.bind("<Return>", lambda event: self.validate())
 
@@ -71,27 +78,27 @@ class VarEntry(Frame):
                     testCapacity = int(self.inputLiftCapacity.get())
                     try:
                         testDelay = float(self.inputDelay.get())
-                        if testFloors < 2 or testFloors > 25:
+                        if testFloors < 2:
                             self.error.set(
                                 "The number of floors '" + str(
-                                    testFloors) + "' is out of range. Please choose a number between 2 and 10.")
+                                    testFloors) + "' is out of range. Please choose a number greater that 1.")
                             print(
                                 "The number of floors '" + str(
-                                    testFloors) + "' is out of range. Please choose a number between 2 and 10.")
-                        elif testPeople < 1 or testPeople > 50:
+                                    testFloors) + "' is out of range. Please choose a number greater than 1.")
+                        elif testPeople < 1:
                             self.error.set(
                                 "The number of people '" + str(
-                                    testPeople) + "' is out of range. Please choose a number between 1 and 50.")
+                                    testPeople) + "' is out of range. Please choose a number greater than 0.")
                             print(
                                 "The number of people '" + str(
-                                    testPeople) + "' is out of range. Please choose a number between 1 and 50.")
+                                    testPeople) + "' is out of range. Please choose a number greater than 0.")
                         elif testCapacity < 1 or testCapacity > 16:
                             self.error.set(
                                 "The capacity of the lift '" + str(
-                                    testCapacity) + "' is out of range. Please choose a number between 1 and 16.")
+                                    testCapacity) + "' is out of range. Please choose a number greater than 0.")
                             print(
                                 "The capacity of the lift '" + str(
-                                    testCapacity) + "' is out of range. Please choose a number between 1 and 16.")
+                                    testCapacity) + "' is out of range. Please choose a number greater than 0.")
                         elif testDelay < 0 or testDelay > 2:
                             self.error.set(
                                 "The animation delay '" + str(
@@ -104,6 +111,10 @@ class VarEntry(Frame):
                             self.numPeople = testPeople
                             self.liftCapacity = testCapacity
                             self.delay = testDelay
+                            print("Number of floors: " +str(self.numFloors))
+                            print("Number of people: " +str(self.numPeople))
+                            print("Lift capacity: " +str(self.liftCapacity))
+                            print("Animation delay: " + str(self.delay))
                             self.root.destroy()
                     except:
                         self.error.set("Please provide a valid input for animation delay.")
@@ -120,10 +131,11 @@ class Model():
         self.departures = {}
         self.arrivals = {}
         self.master = master
-        self.canvas = Canvas(self.master, width=500, height=500, borderwidth=0,
+        self.canvas = Canvas(self.master, width=master.winfo_screenwidth()-20, height=master.winfo_screenheight()-125, borderwidth=0,
                              highlightthickness=0,
                              bg="lightblue")
         self.canvas.pack(fill="both", expand="true")
+
         self.canvas.delete("nums")
         self.canvas.delete("flrs")
         self.canvas.delete("divs")
@@ -187,7 +199,9 @@ class Model():
         # print(self.arrivals)
         self.master.title("Lift Manager")
         self.master.protocol("WM_DELETE_WINDOW", on_closing)
-        self.master.geometry("500x525+350+75")
+        string_geometry = str(master.winfo_screenwidth()-20)+"x"+str(master.winfo_screenheight()-75)+"+0+0"
+        print("Window geometry: " + string_geometry)
+        self.master.geometry(string_geometry)
         self.master.resizable(False, False)
         self.master.update()
 
@@ -209,20 +223,25 @@ class Building(object):
     def move(self):
         while len(waiting) > 0 or len(lift.passengers) > 0:
             print("\nThe lift is on floor: " + str(lift.currentFloor))
-            tile = lift.tiles[lift.currentFloor]
-            model.canvas.itemconfigure(tile, fill="Pink")
-            model.canvas.update()
-            time.sleep(vars.delay)
+
+            if vars.animate.get() == True:
+                tile = lift.tiles[lift.currentFloor]
+                model.canvas.itemconfigure(tile, fill="Pink")
+                model.canvas.update()
+                time.sleep(vars.delay)
+
             # people are delivered before collecting others on the same floor
             # to ensure optimal transportation as they must be travelling to
             # a floor different from their origin, this frees up lift space.
             Building.deliver(self)
             Building.collect(self)
 
-            tile = lift.tiles[lift.currentFloor]
-            model.canvas.itemconfigure(tile, fill="NavajoWhite")
-            model.canvas.update()
-            fin_position = lift.currentFloor
+            if vars.animate.get() == True:
+                tile = lift.tiles[lift.currentFloor]
+                model.canvas.itemconfigure(tile, fill="NavajoWhite")
+                model.canvas.update()
+                fin_position = lift.currentFloor
+
             lift.currentFloor += lift.direction
             lift.floorsMoved += 1
             # Model.update(self, numRemaining)
@@ -231,11 +250,15 @@ class Building(object):
         # need to remove the one extra move counted
         # because the while loop runs to completion.
         lift.floorsMoved -= 1
-        # display the final floor the list ends on.
-        tile = lift.tiles[fin_position]
-        model.canvas.itemconfigure(tile, fill="Pink")
-        model.canvas.update()
-        model.master.mainloop()
+        print("\nThe lift travelled: " + str(lift.floorsMoved) + " floors in total.")
+        print("The average number of floors traversed to deliver each passenger is " + str(lift.floorsMoved/numPeople))
+
+        if vars.animate.get() == True:
+            # display the final floor the list ends on.
+            tile = lift.tiles[fin_position]
+            model.canvas.itemconfigure(tile, fill="Pink")
+            model.canvas.update()
+            model.master.mainloop()
 
 
     def collect(self):
@@ -245,22 +268,28 @@ class Building(object):
                 # adds waiting passengers to the lift if travelling in the direction of the lift.
                 if person.direction == lift.direction:
                     People.destination(person)
-                    # print("\nPerson " + str(person.idPerson) + " started on floor " +  str(person.originFlr) + " travelling in direction " + str(person.direction) + " to floor " + str(person.destFlr))
+                    # print("\nPerson: " + str(person.idPerson) + " started on floor " +  str(person.originFlr) + " travelling in direction " + str(person.direction) + " to floor " + str(person.destFlr))
                     # add as many passenger as possible before the lift becomes full.
                     if len(lift.passengers) < lift.capacity:
                         lift.passengers.append(person)
-                        tile = lift.tiles[lift.currentFloor]
-                        model.canvas.itemconfigure(tile, fill="ForestGreen")
-                        model.canvas.update()
-                        time.sleep(vars.delay/5)
-                        model.canvas.itemconfigure(tile, fill="Pink")
-                        model.canvas.update()
+
+                        if vars.animate.get() == True:
+                            tile = lift.tiles[lift.currentFloor]
+                            model.canvas.itemconfigure(tile, fill="ForestGreen")
+                            model.canvas.update()
+                            time.sleep(vars.delay/5)
+                            model.canvas.itemconfigure(tile, fill="Pink")
+                            model.canvas.update()
+
                         waiting[lift.currentFloor].remove(person)
-                        # change the value of people waiting on that floor
-                        departed_num = model.departures[lift.currentFloor]
-                        model.canvas.itemconfigure(departed_num, text=str(len(waiting[lift.currentFloor])))
-                        model.canvas.update()
-                        time.sleep(vars.delay/2)
+
+                        if vars.animate.get() == True:
+                            # change the value of people waiting on that floor
+                            departed_num = model.departures[lift.currentFloor]
+                            model.canvas.itemconfigure(departed_num, text=str(len(waiting[lift.currentFloor])))
+                            model.canvas.update()
+                            time.sleep(vars.delay/2)
+
                         if len(waiting[lift.currentFloor]) == 0:
                             del waiting[lift.currentFloor]
                         print("\nPerson " + str(person.id) + " got in the lift at floor " + str(lift.currentFloor))
@@ -277,18 +306,24 @@ class Building(object):
                 if person.destFlr not in delivered:
                     delivered[person.destFlr] = []
                 delivered[person.destFlr].append(person)
-                tile = lift.tiles[lift.currentFloor]
-                model.canvas.itemconfigure(tile, fill="Orange")
-                model.canvas.update()
-                time.sleep(vars.delay/5)
-                model.canvas.itemconfigure(tile, fill="Pink")
-                model.canvas.update()
+
+                if vars.animate.get() == True:
+                    tile = lift.tiles[lift.currentFloor]
+                    model.canvas.itemconfigure(tile, fill="Orange")
+                    model.canvas.update()
+                    time.sleep(vars.delay/5)
+                    model.canvas.itemconfigure(tile, fill="Pink")
+                    model.canvas.update()
+
                 lift.passengers.remove(person)
-                # change the value of people having arrived on that floor.
-                arrive_num = model.arrivals[lift.currentFloor]
-                model.canvas.itemconfigure(arrive_num, text=str(len(delivered[lift.currentFloor])))
-                model.canvas.update()
-                time.sleep(vars.delay/2)
+
+                if vars.animate.get() == True:
+                    # change the value of people having arrived on that floor.
+                    arrive_num = model.arrivals[lift.currentFloor]
+                    model.canvas.itemconfigure(arrive_num, text=str(len(delivered[lift.currentFloor])))
+                    model.canvas.update()
+                    time.sleep(vars.delay/2)
+
                 print("Person " + str(person.id) + " exited the lift on floor " + str(person.destFlr))
                 print("There are " + str(len(lift.passengers)) + " passengers in the lift.")
 
@@ -375,8 +410,11 @@ if __name__ == "__main__":
     root = Tk()
     # VarEntry is the class containing the user's input
     vars = VarEntry(root)
-    # master is the animation window
-    master = Tk()
+
+    if vars.animate.get() == True:
+        # master is the animation window
+        master = Tk()
+
     # creates the lift object and add the index of tiles to a dictionary
     lift = Lift()
 
@@ -392,8 +430,9 @@ if __name__ == "__main__":
     print(waiting)
     # print(peopleWaiting)
 
-    # Model is the class containing the building objects
-    model = Model(master)
+    if vars.animate.get() == True:
+        # Model is the class containing the building objects
+        model = Model(master)
 
     Building()
     # print("The lift has travelled " + str(lift.floorsMoved) + " floors.")
