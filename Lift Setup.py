@@ -117,28 +117,44 @@ class Model():
                     y2 = y1 + cellheight
                     if row % 2 == 0:
                         y2 -= 1
-                    self.canvas.create_line(0, y1, self.canvas.winfo_reqwidth(),
+                    line = self.canvas.create_line(0, y1, self.canvas.winfo_reqwidth(),
                                             y1, fill="BurlyWood",
                                             tags="divs")
+                    print("Line divider: " + str(line))
                     tile = self.canvas.create_rectangle(x1, y1, x2, y2,
                                                         fill="NavajoWhite",
                                                         tags="flrs")
+                    print("Lift Tile: " + str(tile))
                     lift.tiles[current_floor - 1] = tile
                     current_floor -= 1
             elif column in range(0, 3, 2):
                 floor_num = 0
                 for row in range(vars.numFloors, 0, -1):
-                    y1 = (row * cellheight) - 5
-                    if row % 2 == 0:
-                        y1 -= 1
-                    y2 = y1 - (cellheight // 1.5)
-                    self.canvas.create_text(1, y2, anchor="nw", text=str(floor_num), tags="flrs",
-                                            font=('Arial', -round(cellheight // 1.75)))
-                    self.canvas.create_text(cellwidth - 3, y2 + 3, anchor="ne",
-                                            text=str(len(floorsList[floor_num].peopleOnFloor)),
-                                            fill="CadetBlue",
-                                            font=('Arial', -round(cellheight // 2)))
-                    floor_num += 1
+                    if column == 0:
+                        y1 = (row * cellheight) - 5
+                        if row % 2 == 0:
+                            y1 -= 1
+                        y2 = y1 - (cellheight // 1.5)
+                        num = self.canvas.create_text(1, y2, anchor="nw", text=str(floor_num), tags="flrs",
+                                                font=('Arial', -round(cellheight // 1.75)))
+                        print("Floor number: " + str(num))
+                        depart_num = self.canvas.create_text(cellwidth - 3, y2 + 3, anchor="ne",
+                                                text=str(len(floorsList[floor_num].peopleOnFloor)),
+                                                fill="CadetBlue",
+                                                font=('Arial', -round(cellheight // 2)))
+                        print("Depart number: " + str(depart_num))
+                        floor_num += 1
+                    elif column == 2:
+                        y1 = (row * cellheight) - 5
+                        if row % 2 == 0:
+                            y1 -= 1
+                        y2 = y1 - (cellheight // 1.5)
+                        arrive_num = self.canvas.create_text((cellwidth * column) + 3, y2 + 3, anchor="nw",
+                                                text=str(len(peopleArrived)),
+                                                fill="CadetBlue",
+                                                font=('Arial', -round(cellheight // 2)))
+                        print("Arrive number: " + str(arrive_num))
+                        floor_num += 1
         self.master.title("Lift Manager")
         self.master.protocol("WM_DELETE_WINDOW", on_closing)
         self.master.geometry("500x525+350+75")
@@ -188,6 +204,7 @@ class Building(object):
                 lift.direction *= -1
             time.sleep(0.1)
         model.master.mainloop()
+
 
     def collect(self):
         for person in floorsList[lift.currentFloor].peopleOnFloor:
