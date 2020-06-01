@@ -18,18 +18,24 @@ class Building(object):
                 lift.liftFloor += lift.direction
 
     def check(self):
-        self.freeSpaces = lift.capacity - len(lift.passengers)
-        for person in floorsList[lift.liftFloor].peopleOnFloor:
-            for x in range(self.freeSpaces):
-                if (self.freeSpaces > 0) and (len(floorsList[lift.liftFloor].peopleOnFloor) > 0):
-                    Building.algorithm(self)
-            print("\nPerson " + str(person.idPerson) + " got in the lift at floor "  + str(lift.liftFloor))
+        while len(lift.passengers) < lift.capacity:
+            print("num passenger " + str(len(lift.passengers)))
+            print("capacity " + str(lift.capacity))
+            while len(floorsList[lift.liftFloor].peopleOnFloor) != 0:
+                Building.algorithm(self)
+                print("extra len " + str(len(floorsList[lift.liftFloor].peopleOnFloor)))
+            break
+        print("The lift is full.")
 
     def algorithm(self):
-        passenger = random.choice(floorsList[lift.liftFloor].peopleOnFloor)
-        lift.passengers.append(passenger)
-        floorsList[lift.liftFloor].peopleOnFloor.remove(passenger)
-        print(passenger.idPerson)
+        for person in floorsList[lift.liftFloor].peopleOnFloor:
+            print(person.idPerson)
+            print("\nPerson " + str(person.idPerson) + " got in the lift at floor " + str(
+                lift.liftFloor))
+            lift.passengers.append(person)
+            print("before len " + str(len(floorsList[lift.liftFloor].peopleOnFloor)))
+            floorsList[lift.liftFloor].peopleOnFloor.remove(person)
+            print("after len " + str(len(floorsList[lift.liftFloor].peopleOnFloor)))
 
 
 
@@ -80,7 +86,6 @@ class Floors(object):
 
 
 if __name__ == "__main__":
-
     master = Tk()
     liftTiles = {}
     peopleList = []
