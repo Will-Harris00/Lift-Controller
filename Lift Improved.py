@@ -5,7 +5,7 @@ import time
 
 
 class VarEntry(Frame):
-    def __init__(self, root, numFloors=3, numPeople=2, liftCapacity=1, numRepeats=1, delay=0.35, **kw):
+    def __init__(self, root, numFloors=10, numPeople=50, liftCapacity=6, numRepeats=1, delay=0.35, **kw):
         super().__init__(**kw)
         self.root = root
 
@@ -309,6 +309,9 @@ class Building(object):
             first_loop_complete = True
 
             if collect:
+                Building.collect(self)
+
+            if collect:
                 print("A")
                 if len(waiting.keys()) == 1 :
                     print("B")
@@ -349,9 +352,6 @@ class Building(object):
                             else:
                                 lift.direction = -1
                         collect = False
-
-            if collect:
-                Building.collect(self)
 
             if vars.animate == True:
                 tile = lift.tiles[lift.currentFloor]
@@ -395,6 +395,9 @@ class Building(object):
                     People.destination(person)
                     # print("\nPerson: " + str(person.id) + " started on floor " +  str(person.originFlr) + " travelling in direction " + str(person.direction) + " to floor " + str(person.destFlr))
                     # add as many passenger as possible before the lift becomes full.
+                    print(person)
+                    print(len(lift.passengers))
+                    print(lift.capacity)
                     if len(lift.passengers) < lift.capacity:
                         lift.passengers.append(person)
 
