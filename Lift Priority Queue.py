@@ -285,6 +285,7 @@ class Building(object):
         # because the while loop runs to completion.
         lift.floorsMoved -= 1
         print("\nThe lift travelled: " + str(lift.floorsMoved) + " floors in total.")
+        print("The number of people delivered is: " + str(self.peopleDelivered))
         print("The average number of floors traversed to deliver each passenger is " + str(lift.floorsMoved/numPeople))
 
         if vars.animate == True:
@@ -337,28 +338,51 @@ class Building(object):
                 num_on_floor = []
                 floors_index = []
                 # count the number of people on each floor to determine where to go next
-                for floor in waiting:
-                    num_on_floor.append(len(waiting[floor]))
-                    floors_index.append(floor)
-                    print("\nFloor " + str(floor) + " has " + str(len(waiting[floor])) + " people waiting.")
+
+                for floor in range(numFloors):
+                    if floor not in waiting:
+                        num_on_floor.append(0)
+                        floors_index.append(floor)
+                        print("Floor " + str(floor) + " has 0 people waiting.")
+                    else:
+                        num_on_floor.append(len(waiting[floor]))
+                        floors_index.append(floor)
+                        print("Floor " + str(floor) + " has " + str(len(waiting[floor])) + " people waiting.")
+                print("Current lift floor: " + str(lift.currentFloor))
+                print("Floors index: " + str(floors_index))
+                print("Num on floor: " + str(num_on_floor))
 
                 num_above = 0
                 num_below = 0
-                i = 1
+                j = 1
                 while num_above == 0 and num_below == 0:
-                    try:
-                        num_above = num_on_floor[lift.currentFloor + i]
-                    except IndexError:
+                    upper_index = lift.currentFloor + j
+                    lower_index = lift.currentFloor - j
+                    print("Upper index: " + str(upper_index))
+                    print("Lower index: " + str(lower_index))
+                    print("Step counter: " + str(j))
+                    if upper_index > (numFloors - 1):
                         num_above = 0
-                    try:
-                        num_below = num_on_floor[lift.currentFloor - i]
-                    except IndexError:
-                        num_below = 0
-                    i += 1
-
+                        print("Num on floor above: " + str(num_above))
+                        if lower_index < 0:
+                            num_below = 0
+                            print("Num on floor below: " + str(num_below))
+                        else:
+                            num_below = num_on_floor[lower_index]
+                            print("Num on floor below: " + str(num_below))
+                    else:
+                        num_above = num_on_floor[upper_index]
+                        print("Num on floor above: " + str(num_above))
+                        if lower_index < 0:
+                            num_below = 0
+                            print("Num on floor below: " + str(num_below))
+                        else:
+                            num_below = num_on_floor[lower_index]
+                            print("Num on floor below: " + str(num_below))
+                    j += 1
                 # finds the floor with the greatest number of people waiting
                 next_floor = floors_index[num_on_floor.index(max(num_above, num_below))]
-                print("\nThe next floor to go to is floor " + str(next_floor) +" with " + str(max(num_on_floor)) + " people waiting.")
+                print("\nThe next floor to go to is floor " + str(next_floor) +" with " + str(num_on_floor[floors_index.index(next_floor)]) + " people waiting.")
                 print("\nThe lift travelled: " + str(lift.floorsMoved) + " floors in total.")
                 print("The number of people delivered is: " + str(self.peopleDelivered))
                 print("The average number of floors traversed to deliver each passenger is " + str(
@@ -369,24 +393,18 @@ class Building(object):
                 # closest floor with priority of greatest number waiting
                 flrs_difference = next_floor - lift.currentFloor
 
-                for i in range(abs(flrs_difference)):
+                for k in range(abs(flrs_difference)):
                     if flrs_difference > 0:
                         lift.currentFloor += 1
-                        self.deliver()
-                        self.collect()
                         print("\nThe lift is on floor: " + str(lift.currentFloor))
                     else:
                         lift.currentFloor -= 1
-                        self.deliver()
-                        self.collect()
                         print("\nThe lift is on floor: " + str(lift.currentFloor))
                     lift.floorsMoved += 1
                 pass
 
     def deliver(self):
-        self.travel()
         for person in lift.passengers[:]:
-            self.travel()
             if person.destFlr == lift.currentFloor:
                 delivered[person.destFlr].append(person)
 
@@ -425,13 +443,17 @@ class Building(object):
                     min_abs_value = abs(num)
                     min_real_value = num
 
-            for i in range(abs(min_real_value)):
+            for l in range(abs(min_real_value)):
                 # Moves the lift up or down depending on the direction.
                 if min_real_value > 0:
                     lift.currentFloor += 1
+                    self.deliver()
+                    self.collect()
                     print("\nThe lift is on floor: " + str(lift.currentFloor))
                 else:
                     lift.currentFloor -= 1
+                    self.deliver()
+                    self.collect()
                     print("\nThe lift is on floor: " + str(lift.currentFloor))
                 lift.floorsMoved += 1
 
