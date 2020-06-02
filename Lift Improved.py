@@ -5,7 +5,7 @@ import time
 
 
 class VarEntry(Frame):
-    def __init__(self, root, numFloors=10, numPeople=50, liftCapacity=6, numRepeats=1, delay=0.35, **kw):
+    def __init__(self, root, numFloors=3, numPeople=2, liftCapacity=1, numRepeats=1, delay=0.35, **kw):
         super().__init__(**kw)
         self.root = root
 
@@ -254,8 +254,16 @@ class Building(object):
 
     def move(self):
         first_loop_complete = False
+        collect = True
+        for i in range(len(waiting)):
+            if len(waiting[i]) == 0:
+                del waiting[i]
         while len(waiting) > 0 or len(lift.passengers) > 0:
+            print(len(waiting))
+            print(len(lift.passengers))
+            print(waiting)
             print("\nThe lift is on floor " + str(lift.currentFloor))
+
             if vars.animate == True:
                 tile = lift.tiles[lift.currentFloor]
                 model.canvas.itemconfigure(tile, fill="Pink")
@@ -300,7 +308,50 @@ class Building(object):
                     lift.direction *= -1
             first_loop_complete = True
 
-            Building.collect(self)
+            if collect:
+                print("A")
+                if len(waiting.keys()) == 1 :
+                    print("B")
+                    if lift.currentFloor == list(waiting.keys())[0] and len(lift.passengers) == 0:
+                        print("C")
+                        for person in waiting[lift.currentFloor][:]:
+                            People.destination(person)
+
+                            lift.passengers.append(person)
+
+                            if vars.animate == True:
+                                tile = lift.tiles[lift.currentFloor]
+                                model.canvas.itemconfigure(tile, fill="ForestGreen")
+                                model.canvas.update()
+                                time.sleep(vars.delay / 5)
+                                model.canvas.itemconfigure(tile, fill="Pink")
+                                model.canvas.update()
+
+                            waiting[lift.currentFloor].remove(person)
+
+                            if len(waiting[lift.currentFloor]) == 0:
+                                del waiting[lift.currentFloor]
+                            print(waiting)
+
+                            if vars.animate == True:
+                                # change the value of people waiting on that floor
+                                departed_num = model.departures[lift.currentFloor]
+                                model.canvas.itemconfigure(departed_num, text="0")
+                                model.canvas.update()
+                                time.sleep(vars.delay / 2)
+
+                            print("\nPerson " + str(person.id) + " got in the lift at floor " + str(
+                                lift.currentFloor))
+                            print("There are " + str(len(lift.passengers)) + " passenger in the lift.")
+
+                            if person.destFlr > lift.currentFloor:
+                                lift.direction = 1
+                            else:
+                                lift.direction = -1
+                        collect = False
+
+            if collect:
+                Building.collect(self)
 
             if vars.animate == True:
                 tile = lift.tiles[lift.currentFloor]
@@ -338,6 +389,8 @@ class Building(object):
             for person in waiting[lift.currentFloor][:]:
                 # print("Person " + str(person.id) + " is travelling in direction: " + str(person.direction) + " the lift direction is: " + str(lift.direction))
                 # adds waiting passengers to the lift if travelling in the direction of the lift.
+                print(person.direction)
+                print(lift.direction)
                 if person.direction == lift.direction:
                     People.destination(person)
                     # print("\nPerson: " + str(person.id) + " started on floor " +  str(person.originFlr) + " travelling in direction " + str(person.direction) + " to floor " + str(person.destFlr))
