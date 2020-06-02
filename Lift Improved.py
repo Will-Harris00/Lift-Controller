@@ -237,16 +237,6 @@ class Model():
         self.master.resizable(False, False)
         self.master.update()
 
-    """
-    def update(self, numRemaining):
-        self.peopleRemaining = Label(self.master, text="People remaining: " + str(numRemaining))
-        self.peopleRemaining.pack(side="left")
-        self.floorsMoved = Label(self.master, text="Floors moved: " + str(
-            lift.floorsMoved))
-        self.floorsMoved.pack(side="left")
-        self.master.update()
-    """
-
 
 class Building(object):
     def __init__(self):
@@ -254,22 +244,22 @@ class Building(object):
 
     def move(self):
         first_loop_complete = False
-        collect = True
+        collect_continue = True
         for i in range(len(waiting)):
             if len(waiting[i]) == 0:
                 del waiting[i]
-        while len(waiting) > 0 or len(lift.passengers) > 0:
-            print(len(waiting))
-            print(len(lift.passengers))
-            print(waiting)
-            print("\nThe lift is on floor " + str(lift.currentFloor))
 
+        while len(waiting) > 0 or len(lift.passengers) > 0:
+            print("\nThe lift is on floor " + str(lift.currentFloor))
             if vars.animate == True:
                 tile = lift.tiles[lift.currentFloor]
                 model.canvas.itemconfigure(tile, fill="Pink")
                 model.canvas.update()
                 time.sleep(vars.delay)
 
+            # people are delivered before collecting others on the same floor
+            # to ensure optimal transportation as they must be travelling to
+            # a floor different from their origin, this frees up lift space.
             Building.deliver(self)
 
             useful_floors = set()
@@ -285,7 +275,7 @@ class Building(object):
                 # print("Floor " +str(floor))
                 # print("Num waiting " + str(len(waiting[floor])))
 
-            print(useful_floors)
+            # print(useful_floors)
             possible_flrs = set()
             for i in range(0, numFloors - 1):
                 # print("Difference " + str(i))
@@ -299,7 +289,7 @@ class Building(object):
                     if next_floor < 0:
                         break
                     possible_flrs.add(next_floor)
-            print(possible_flrs)
+            # print(possible_flrs)
 
             if first_loop_complete:
                 if lift.currentFloor == numFloors - 1 or lift.currentFloor == 0:
@@ -308,20 +298,15 @@ class Building(object):
                     lift.direction *= -1
             first_loop_complete = True
 
-            if collect:
+            if collect_continue:
                 Building.collect(self)
 
-            if collect:
-                print("A")
+            if collect_continue:
                 if len(waiting.keys()) == 1 :
-                    print("B")
                     if lift.currentFloor == list(waiting.keys())[0] and len(lift.passengers) == 0:
-                        print("C")
                         for person in waiting[lift.currentFloor][:]:
                             People.destination(person)
-
                             lift.passengers.append(person)
-
                             if vars.animate == True:
                                 tile = lift.tiles[lift.currentFloor]
                                 model.canvas.itemconfigure(tile, fill="ForestGreen")
@@ -331,10 +316,9 @@ class Building(object):
                                 model.canvas.update()
 
                             waiting[lift.currentFloor].remove(person)
-
                             if len(waiting[lift.currentFloor]) == 0:
                                 del waiting[lift.currentFloor]
-                            print(waiting)
+                            # print(waiting)
 
                             if vars.animate == True:
                                 # change the value of people waiting on that floor
@@ -351,7 +335,7 @@ class Building(object):
                                 lift.direction = 1
                             else:
                                 lift.direction = -1
-                        collect = False
+                        collect_continue = False
 
             if vars.animate == True:
                 tile = lift.tiles[lift.currentFloor]
@@ -361,18 +345,22 @@ class Building(object):
 
             lift.currentFloor += lift.direction
             lift.floorsMoved += 1
+            for floor in waiting:
+                for person in waiting[floor]:
+                    person.waitTime += 1
 
-            # people are delivered before collecting others on the same floor
-            # to ensure optimal transportation as they must be travelling to
-            # a floor different from their origin, this frees up lift space.
-            # Model.update(self, numRemaining)
         # need to remove the one extra move counted
         # because the while loop runs to completion.
-        lift.floorsMoved -= 1
+        self.total_wait_time = 0
+        for floor in delivered:
+            for person in delivered[floor]:
+                self.total_wait_time += person.waitTime
         print("\nThe lift travelled " + str(lift.floorsMoved) + " floors in total.")
         print("The number of floors in the building was " + str(numFloors))
         print("The number of people delivered is " + str(numPeople))
-        print("The average number of floors traversed to deliver each passenger is " + str(lift.floorsMoved/numPeople))
+        print("The average number of floors traversed to deliver each passenger is " + str(
+            lift.floorsMoved / numPeople))
+        print("The average wait-time per passenger is " + str(self.total_wait_time / numPeople))
 
         if vars.animate == True:
             # display the final floor the list ends on.
@@ -389,15 +377,8 @@ class Building(object):
             for person in waiting[lift.currentFloor][:]:
                 # print("Person " + str(person.id) + " is travelling in direction: " + str(person.direction) + " the lift direction is: " + str(lift.direction))
                 # adds waiting passengers to the lift if travelling in the direction of the lift.
-                print(person.direction)
-                print(lift.direction)
                 if person.direction == lift.direction:
                     People.destination(person)
-                    # print("\nPerson: " + str(person.id) + " started on floor " +  str(person.originFlr) + " travelling in direction " + str(person.direction) + " to floor " + str(person.destFlr))
-                    # add as many passenger as possible before the lift becomes full.
-                    print(person)
-                    print(len(lift.passengers))
-                    print(lift.capacity)
                     if len(lift.passengers) < lift.capacity:
                         lift.passengers.append(person)
 
@@ -426,6 +407,11 @@ class Building(object):
                     else:
                         break
         except:
+            try:
+                if len(waiting[lift.currentFloor]) == 0:
+                    del waiting[lift.currentFloor]
+            except:
+                pass
             pass
 
     def deliver(self):
@@ -467,7 +453,7 @@ class Lift(object):
 class People(object):
     def __init__(self, topFloor, id):
         self.id = id
-        self.flrsPassed = 0
+        self.waitTime = 0
         self.originFlr = random.randint(0, topFloor)
 
         # if the person is on the top floor then they must travel down.
@@ -496,23 +482,6 @@ class People(object):
         self.destFlr = random.choice(selection)
 
 
-"""
-class Floors(object):
-    def __init__(self, peopleWaiting, floorId):
-        self.idFloor = floorId
-        self.count = 0
-        self.peopleOnFloor = Floors.assign(self, peopleWaiting)
-        print("Floor " + str(self.idFloor) + " has " + str(
-            len(self.peopleOnFloor)) + " passengers waiting.")
-
-    def assign(self, peopleWaiting):
-        self.peopleOnFloor = []
-        for k in peopleWaiting:
-            if k.originFlr == floorId:
-                self.peopleOnFloor.append(k)
-        return self.peopleOnFloor
-"""
-
 def on_continue():
     if messagebox.askokcancel("Run animation", "Do you want to continue with default values?"):
         print("\nRunning simulation with default values.\n")
@@ -521,7 +490,6 @@ def on_continue():
 
 def on_closing():
     if messagebox.askokcancel("Exit program", "Do you want to quit?"):
-        Building.wait = 0
         master.destroy()
 
 
@@ -542,9 +510,9 @@ if __name__ == "__main__":
 
         waiting = {}
         delivered = {}
-        # floorsList = []
         numFloors = vars.numFloors
         numPeople = vars.numPeople
+
         # initialises the dictionaries
         for i in range(numFloors):
             waiting[i] = []
@@ -554,13 +522,11 @@ if __name__ == "__main__":
             person = (People(numFloors - 1, id))
             waiting[person.originFlr].append(person)
         print(waiting)
-        # print(peopleWaiting)
 
         if vars.animate == True:
             # Model is the class containing the building objects
             model = Model(master)
 
         Building()
-        # print("The lift has travelled " + str(lift.floorsMoved) + " floors.")
 
         vars.numRepeats -= 1
