@@ -79,7 +79,7 @@ class improvedBuilding(object):
             # print("\nThe lift is on floor " + str(lift.currentFloor))
 
             # people are delivered before collecting others on the same floor
-            # to ensure optimal transportation as they must be travelling to
+            # to ensure optimal transportation as they must be traváelling to
             # a floor different from their origin, this frees up lift space.
             deliver()
 
@@ -253,9 +253,9 @@ if __name__ == "__main__":
     # system selection
     systems = ['Basic', 'Improved']
     # Number of floors
-    num_floors_sims = [10, 20, 25, 30, 40, 50]#,75, 100, 125, 150, 175, 200, 225, 250]
+    num_floors_sims = [10, 20, 30, 40, 50]
     # Number of people
-    num_people_sims = [100]#, 500, 1000, 2000, 5000]
+    num_people_sims = [100]
     j = 0
     for capacity in max_capacity:
         excel_file = "LiftCapacity" + str(capacity) + ".xlsx"
@@ -305,16 +305,16 @@ if __name__ == "__main__":
                     df.loc[j] = [system, numFloors, numPeople,
                                  avg_total_lift_moves,
                                  avg_total_wait_time]
-                    print(df)
                     j+=1
         print(df)
+        df.to_excel(excel_file, sheet_name='Sheet_name_1')
         # Use the 'hue' argument to provide a factor variable
-        sns.catplot(data=df, x="Num_Floors", y="Passenger_Avg_Moves",
+        sns.catplot(data=df, x="Num_Floors", y="Passenger_Avg_Wait",
                         hue='System', kind='point',
                         legend='full',
                         palette={'Basic': 'dodgerblue', 'Improved': 'red'},
                         linestyles=["-", "--"], markers=["s", "d"])
         plt.title(str(num_people_sims[0]) + " Passengers - Lift Capacity " + str(capacity))
         plt.xlabel('Number of Floors')
-        plt.ylabel('Average Moves Per Person')
+        plt.ylabel('Average Wait Time Per Person')
         plt.show()
