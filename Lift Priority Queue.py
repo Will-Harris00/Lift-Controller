@@ -256,6 +256,8 @@ class Building(object):
     def move(self):
         self.all_delivered = False
         print("\nThe lift is on floor: 0")
+        Building.collect(self)
+        Building.travel(self)
         while len(waiting) > 0 or len(lift.passengers) > 0:
             if self.all_delivered == False:
 
@@ -370,9 +372,13 @@ class Building(object):
                 for i in range(abs(flrs_difference)):
                     if flrs_difference > 0:
                         lift.currentFloor += 1
+                        self.deliver()
+                        self.collect()
                         print("\nThe lift is on floor: " + str(lift.currentFloor))
                     else:
                         lift.currentFloor -= 1
+                        self.deliver()
+                        self.collect()
                         print("\nThe lift is on floor: " + str(lift.currentFloor))
                     lift.floorsMoved += 1
                 pass
