@@ -1,0 +1,519 @@
+"C:\Users\wjhar\OneDrive\Documents\Exeter Uni Work\Year 1 - Term 2\ECM1414 - Data Structures and Algorithms\Coursework - Data Structures\Python - Lift Problem\venv\Scripts\python.exe" "C:/Users/wjhar/OneDrive/Documents/Exeter Uni Work/Year 1 - Term 2/ECM1414 - Data Structures and Algorithms/Coursework - Data Structures/Python - Lift Problem/lift_v63.py"
+Improved system
+Number of floors: 10
+Number of people: 50
+Lift capacity: 6
+Number of repetitions: 0
+Number of floors: 10
+Animation delay: 0.05
+
+Simulation number: 1
+{9: [<__main__.People object at 0x0D5CB940>, <__main__.People object at 0x0D5CBAA8>, <__main__.People object at 0x0D5CBAD8>, <__main__.People object at 0x0D520070>], 2: [<__main__.People object at 0x0D5CB718>, <__main__.People object at 0x0D5CB988>, <__main__.People object at 0x0D5CBB08>, <__main__.People object at 0x0D5CBCB8>, <__main__.People object at 0x0D520040>, <__main__.People object at 0x0D520160>], 4: [<__main__.People object at 0x0D5CB910>, <__main__.People object at 0x0D5CB928>, <__main__.People object at 0x0D5CBBC8>, <__main__.People object at 0x0D5CBD48>, <__main__.People object at 0x0D5CBE98>, <__main__.People object at 0x0D5CBEC8>], 0: [<__main__.People object at 0x0D5CB778>, <__main__.People object at 0x0D5CB9B8>, <__main__.People object at 0x0D5CB9E8>, <__main__.People object at 0x0D5CBA48>, <__main__.People object at 0x0D5CBD78>, <__main__.People object at 0x0D5CBDD8>, <__main__.People object at 0x0D5CBFB8>, <__main__.People object at 0x0D5200D0>], 7: [<__main__.People object at 0x0D5CB8B0>, <__main__.People object at 0x0D5CBA78>, <__main__.People object at 0x0D5CBE08>, <__main__.People object at 0x0D5CBE38>, <__main__.People object at 0x0D5CBF28>, <__main__.People object at 0x0D520130>, <__main__.People object at 0x0D5201C0>], 3: [<__main__.People object at 0x0D5CBA18>, <__main__.People object at 0x0D5CBB68>, <__main__.People object at 0x0D5CBB98>, <__main__.People object at 0x0D5CBC58>, <__main__.People object at 0x0D5CBF58>, <__main__.People object at 0x0D5200A0>, <__main__.People object at 0x0D520100>], 5: [<__main__.People object at 0x0D5CBB38>, <__main__.People object at 0x0D5CBDA8>, <__main__.People object at 0x0D520190>], 1: [<__main__.People object at 0x0D5CBBF8>, <__main__.People object at 0x0D5CBD18>, <__main__.People object at 0x0D5CBE68>, <__main__.People object at 0x0D5CBFE8>], 6: [<__main__.People object at 0x0D5CBC28>, <__main__.People object at 0x0D5CBEF8>, <__main__.People object at 0x0D5CBF88>], 8: [<__main__.People object at 0x0D5CBC88>, <__main__.People object at 0x0D5CBCE8>]}
+Window geometry: 1260x725+0+0
+
+The lift is on floor: 0
+
+Person 3 got in the lift at floor 0
+There are 1 passenger in the lift.
+
+Person 8 got in the lift at floor 0
+There are 2 passenger in the lift.
+
+Person 27 got in the lift at floor 0
+There are 3 passenger in the lift.
+
+Person 39 got in the lift at floor 0
+There are 4 passenger in the lift.
+
+The lift is on floor: 1
+
+Person 19 got in the lift at floor 1
+There are 5 passenger in the lift.
+
+The lift is on floor: 2
+
+Person 14 got in the lift at floor 2
+There are 6 passenger in the lift.
+
+The lift is on floor: 3
+
+The lift is on floor: 4
+
+The lift is on floor: 5
+Person 19 exited the lift on floor 5
+There are 5 passengers in the lift.
+
+Person 15 got in the lift at floor 5
+There are 6 passenger in the lift.
+
+The lift is on floor: 6
+
+The lift is on floor: 7
+Person 8 exited the lift on floor 7
+There are 5 passengers in the lift.
+Person 14 exited the lift on floor 7
+There are 4 passengers in the lift.
+
+Person 4 got in the lift at floor 7
+There are 5 passenger in the lift.
+
+Person 30 got in the lift at floor 7
+There are 6 passenger in the lift.
+
+The lift is on floor: 8
+Person 39 exited the lift on floor 8
+There are 5 passengers in the lift.
+Person 30 exited the lift on floor 8
+There are 4 passengers in the lift.
+
+Person 22 got in the lift at floor 8
+There are 5 passenger in the lift.
+
+The lift is on floor: 9
+Person 3 exited the lift on floor 9
+There are 4 passengers in the lift.
+Person 4 exited the lift on floor 9
+There are 3 passengers in the lift.
+
+Person 0 got in the lift at floor 9
+There are 4 passenger in the lift.
+
+Person 13 got in the lift at floor 9
+There are 5 passenger in the lift.
+
+The lift is on floor: 8
+Person 15 exited the lift on floor 8
+There are 4 passengers in the lift.
+Person 13 exited the lift on floor 8
+There are 3 passengers in the lift.
+
+The lift is on floor: 7
+
+Person 11 got in the lift at floor 7
+There are 4 passenger in the lift.
+
+Person 46 got in the lift at floor 7
+There are 5 passenger in the lift.
+
+The lift is on floor: 6
+Person 46 exited the lift on floor 6
+There are 4 passengers in the lift.
+
+Person 20 got in the lift at floor 6
+There are 5 passenger in the lift.
+
+Person 38 got in the lift at floor 6
+There are 6 passenger in the lift.
+
+The lift is on floor: 5
+
+The lift is on floor: 4
+Person 38 exited the lift on floor 4
+There are 5 passengers in the lift.
+
+Person 2 got in the lift at floor 4
+There are 6 passenger in the lift.
+
+The lift is on floor: 3
+Person 0 exited the lift on floor 3
+There are 5 passengers in the lift.
+
+Person 9 got in the lift at floor 3
+There are 6 passenger in the lift.
+
+The lift is on floor: 2
+Person 9 exited the lift on floor 2
+There are 5 passengers in the lift.
+
+Person 1 got in the lift at floor 2
+There are 6 passenger in the lift.
+
+The lift is on floor: 1
+Person 2 exited the lift on floor 1
+There are 5 passengers in the lift.
+
+Person 25 got in the lift at floor 1
+There are 6 passenger in the lift.
+
+The lift is on floor: 0
+Person 11 exited the lift on floor 0
+There are 5 passengers in the lift.
+Person 1 exited the lift on floor 0
+There are 4 passengers in the lift.
+
+Person 7 got in the lift at floor 0
+There are 5 passenger in the lift.
+
+Person 29 got in the lift at floor 0
+There are 6 passenger in the lift.
+
+The lift is on floor: 1
+
+The lift is on floor: 2
+
+The lift is on floor: 3
+
+The lift is on floor: 4
+
+The lift is on floor: 5
+Person 29 exited the lift on floor 5
+There are 5 passengers in the lift.
+
+Person 48 got in the lift at floor 5
+There are 6 passenger in the lift.
+
+The lift is on floor: 6
+
+The lift is on floor: 7
+Person 7 exited the lift on floor 7
+There are 5 passengers in the lift.
+
+Person 36 got in the lift at floor 7
+There are 6 passenger in the lift.
+
+The lift is on floor: 8
+
+The lift is on floor: 9
+Person 27 exited the lift on floor 9
+There are 5 passengers in the lift.
+Person 48 exited the lift on floor 9
+There are 4 passengers in the lift.
+
+Person 12 got in the lift at floor 9
+There are 5 passenger in the lift.
+
+The lift is on floor: 8
+
+The lift is on floor: 7
+
+Person 31 got in the lift at floor 7
+There are 6 passenger in the lift.
+
+The lift is on floor: 6
+
+The lift is on floor: 5
+
+The lift is on floor: 4
+
+The lift is on floor: 3
+Person 12 exited the lift on floor 3
+There are 5 passengers in the lift.
+
+Person 17 got in the lift at floor 3
+There are 6 passenger in the lift.
+
+The lift is on floor: 2
+Person 31 exited the lift on floor 2
+There are 5 passengers in the lift.
+
+Person 6 got in the lift at floor 2
+There are 6 passenger in the lift.
+
+The lift is on floor: 1
+
+The lift is on floor: 0
+Person 20 exited the lift on floor 0
+There are 5 passengers in the lift.
+Person 17 exited the lift on floor 0
+There are 4 passengers in the lift.
+
+Person 10 got in the lift at floor 0
+There are 5 passenger in the lift.
+
+The lift is on floor: 1
+Person 10 exited the lift on floor 1
+There are 4 passengers in the lift.
+
+The lift is on floor: 2
+
+The lift is on floor: 3
+
+Person 16 got in the lift at floor 3
+There are 5 passenger in the lift.
+
+Person 45 got in the lift at floor 3
+There are 6 passenger in the lift.
+
+The lift is on floor: 4
+
+The lift is on floor: 5
+Person 45 exited the lift on floor 5
+There are 5 passengers in the lift.
+
+The lift is on floor: 6
+
+Person 35 got in the lift at floor 6
+There are 6 passenger in the lift.
+
+The lift is on floor: 7
+Person 16 exited the lift on floor 7
+There are 5 passengers in the lift.
+
+Person 49 got in the lift at floor 7
+There are 6 passenger in the lift.
+
+The lift is on floor: 8
+
+The lift is on floor: 9
+Person 22 exited the lift on floor 9
+There are 5 passengers in the lift.
+Person 36 exited the lift on floor 9
+There are 4 passengers in the lift.
+Person 35 exited the lift on floor 9
+There are 3 passengers in the lift.
+
+Person 42 got in the lift at floor 9
+There are 4 passenger in the lift.
+
+The lift is on floor: 8
+
+The lift is on floor: 7
+
+The lift is on floor: 6
+
+The lift is on floor: 5
+
+Person 28 got in the lift at floor 5
+There are 5 passenger in the lift.
+
+The lift is on floor: 4
+
+Person 5 got in the lift at floor 4
+There are 6 passenger in the lift.
+
+The lift is on floor: 3
+Person 42 exited the lift on floor 3
+There are 5 passengers in the lift.
+
+Person 21 got in the lift at floor 3
+There are 6 passenger in the lift.
+
+The lift is on floor: 2
+Person 5 exited the lift on floor 2
+There are 5 passengers in the lift.
+
+Person 23 got in the lift at floor 2
+There are 6 passenger in the lift.
+
+The lift is on floor: 1
+
+The lift is on floor: 0
+Person 25 exited the lift on floor 0
+There are 5 passengers in the lift.
+Person 28 exited the lift on floor 0
+There are 4 passengers in the lift.
+Person 23 exited the lift on floor 0
+There are 3 passengers in the lift.
+
+Person 44 got in the lift at floor 0
+There are 4 passenger in the lift.
+
+The lift is on floor: 1
+
+The lift is on floor: 2
+Person 21 exited the lift on floor 2
+There are 3 passengers in the lift.
+
+The lift is on floor: 3
+
+The lift is on floor: 4
+
+Person 33 got in the lift at floor 4
+There are 4 passenger in the lift.
+
+The lift is on floor: 5
+
+The lift is on floor: 6
+
+The lift is on floor: 7
+
+The lift is on floor: 8
+
+Person 24 got in the lift at floor 8
+There are 5 passenger in the lift.
+
+The lift is on floor: 9
+Person 49 exited the lift on floor 9
+There are 4 passengers in the lift.
+Person 33 exited the lift on floor 9
+There are 3 passengers in the lift.
+
+The lift is on floor: 8
+
+The lift is on floor: 7
+
+The lift is on floor: 6
+
+The lift is on floor: 5
+
+The lift is on floor: 4
+
+Person 18 got in the lift at floor 4
+There are 4 passenger in the lift.
+
+Person 34 got in the lift at floor 4
+There are 5 passenger in the lift.
+
+The lift is on floor: 3
+
+Person 37 got in the lift at floor 3
+There are 6 passenger in the lift.
+
+The lift is on floor: 2
+Person 34 exited the lift on floor 2
+There are 5 passengers in the lift.
+
+Person 41 got in the lift at floor 2
+There are 6 passenger in the lift.
+
+The lift is on floor: 1
+Person 41 exited the lift on floor 1
+There are 5 passengers in the lift.
+
+Person 32 got in the lift at floor 1
+There are 6 passenger in the lift.
+
+The lift is on floor: 0
+Person 6 exited the lift on floor 0
+There are 5 passengers in the lift.
+Person 18 exited the lift on floor 0
+There are 4 passengers in the lift.
+Person 32 exited the lift on floor 0
+There are 3 passengers in the lift.
+
+The lift is on floor: 1
+
+The lift is on floor: 2
+
+The lift is on floor: 3
+
+The lift is on floor: 4
+
+The lift is on floor: 5
+
+The lift is on floor: 6
+
+The lift is on floor: 7
+
+The lift is on floor: 8
+
+The lift is on floor: 9
+Person 44 exited the lift on floor 9
+There are 2 passengers in the lift.
+
+The lift is on floor: 8
+
+The lift is on floor: 7
+
+The lift is on floor: 6
+
+The lift is on floor: 5
+
+The lift is on floor: 4
+
+Person 26 got in the lift at floor 4
+There are 3 passenger in the lift.
+
+The lift is on floor: 3
+
+Person 43 got in the lift at floor 3
+There are 4 passenger in the lift.
+
+The lift is on floor: 2
+Person 43 exited the lift on floor 2
+There are 3 passengers in the lift.
+
+Person 47 got in the lift at floor 2
+There are 4 passenger in the lift.
+
+The lift is on floor: 1
+
+Person 40 got in the lift at floor 1
+There are 5 passenger in the lift.
+
+The lift is on floor: 0
+Person 37 exited the lift on floor 0
+There are 4 passengers in the lift.
+Person 47 exited the lift on floor 0
+There are 3 passengers in the lift.
+
+The lift is on floor: 1
+
+The lift is on floor: 2
+
+The lift is on floor: 3
+
+The lift is on floor: 4
+
+The lift is on floor: 5
+
+The lift is on floor: 6
+
+The lift is on floor: 7
+
+The lift is on floor: 8
+
+The lift is on floor: 9
+Person 24 exited the lift on floor 9
+There are 2 passengers in the lift.
+
+The lift is on floor: 8
+
+The lift is on floor: 7
+
+The lift is on floor: 6
+
+The lift is on floor: 5
+
+The lift is on floor: 4
+
+The lift is on floor: 3
+
+The lift is on floor: 2
+
+The lift is on floor: 1
+
+The lift is on floor: 0
+Person 26 exited the lift on floor 0
+There are 1 passengers in the lift.
+
+The lift is on floor: 1
+
+The lift is on floor: 2
+
+The lift is on floor: 3
+
+The lift is on floor: 4
+
+The lift is on floor: 5
+
+The lift is on floor: 6
+
+The lift is on floor: 7
+
+The lift is on floor: 8
+
+The lift is on floor: 9
+
+The lift is on floor: 8
+
+The lift is on floor: 7
+
+The lift is on floor: 6
+
+The lift is on floor: 5
+
+The lift is on floor: 4
+
+The lift is on floor: 3
+
+The lift is on floor: 2
+
+The lift is on floor: 1
+
+The lift is on floor: 0
+Person 40 exited the lift on floor 0
+There are 0 passengers in the lift.
+
+The lift travelled: 126 floors in total.
+The average number of floors traversed to deliver each passenger is 2.52
