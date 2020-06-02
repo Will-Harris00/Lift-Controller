@@ -255,7 +255,6 @@ class Building(object):
     def move(self):
         first_loop_complete = False
         while len(waiting) > 0 or len(lift.passengers) > 0:
-            print("\nThe lift is on floor " + str(lift.currentFloor))
             if vars.animate == True:
                 tile = lift.tiles[lift.currentFloor]
                 model.canvas.itemconfigure(tile, fill="Pink")
@@ -279,7 +278,7 @@ class Building(object):
 
             print(useful_floors)
             possible_flrs = set()
-            for i in range(0, numFloors - 1):
+            for i in range(0, numFloors):
                 # print("Difference " + str(i))
                 if lift.direction == 1:
                     next_floor = lift.currentFloor + i
@@ -292,10 +291,7 @@ class Building(object):
                         break
                     possible_flrs.add(next_floor)
             print(possible_flrs)
-
-            if not ((bool(set(useful_floors) & set(possible_flrs)))):
-                lift.direction *= -1
-
+            print("The lift is on floor: "+ str(lift.currentFloor))
             Building.collect(self)
 
             if vars.animate == True:
@@ -304,11 +300,15 @@ class Building(object):
                 model.canvas.update()
                 fin_position = lift.currentFloor
 
+            if first_loop_complete:
+                if lift.currentFloor == numFloors - 1 or lift.currentFloor == 0:
+                    lift.direction *= -1
+                elif not ((bool(set(useful_floors) & set(possible_flrs)))):
+                    lift.direction *= -1
+
             lift.currentFloor += lift.direction
             lift.floorsMoved += 1
-
-            if lift.currentFloor == numFloors - 1 or lift.currentFloor == 0:
-                lift.direction *= -1
+            first_loop_complete = True
 
             # people are delivered before collecting others on the same floor
             # to ensure optimal transportation as they must be travelling to
@@ -337,7 +337,7 @@ class Building(object):
             for person in waiting[lift.currentFloor][:]:
                 # print("Person " + str(person.id) + " is travelling in direction: " + str(person.direction) + " the lift direction is: " + str(lift.direction))
                 # adds waiting passengers to the lift if travelling in the direction of the lift.
-                if person.direction == lift.direction:
+                if person.direction == lift.direction or (lift.currentFloor == 0 or lift.currentFloor == numFloors -1):
                     People.destination(person)
                     # print("\nPerson: " + str(person.id) + " started on floor " +  str(person.originFlr) + " travelling in direction " + str(person.direction) + " to floor " + str(person.destFlr))
                     # add as many passenger as possible before the lift becomes full.
