@@ -340,10 +340,22 @@ class Building(object):
                     floors_index.append(floor)
                     print("\nFloor " + str(floor) + " has " + str(len(waiting[floor])) + " people waiting.")
 
-                # finds the floor with the greatest number of people waiting
-                next_floor = floors_index[num_on_floor.index(max(num_on_floor))]
+                num_above = 0
+                num_below = 0
+                i = 1
+                while num_above == 0 and num_below == 0:
+                    try:
+                        num_above = num_on_floor[lift.currentFloor + i]
+                    except IndexError:
+                        num_above = 0
+                    try:
+                        num_below = num_on_floor[lift.currentFloor - i]
+                    except IndexError:
+                        num_below = 0
+                    i += 1
 
-                print(num_on_floor)
+                # finds the floor with the greatest number of people waiting
+                next_floor = floors_index[num_on_floor.index(max(num_above, num_below))]
                 print("\nThe next floor to go to is floor " + str(next_floor) +" with " + str(max(num_on_floor)) + " people waiting.")
                 print("\nThe lift travelled: " + str(lift.floorsMoved) + " floors in total.")
                 print("The number of people delivered is: " + str(self.peopleDelivered))
@@ -368,9 +380,8 @@ class Building(object):
     def deliver(self):
         self.travel()
         for person in lift.passengers[:]:
+            self.travel()
             if person.destFlr == lift.currentFloor:
-                if person.destFlr not in delivered:
-                    delivered[person.destFlr] = []
                 delivered[person.destFlr].append(person)
 
                 if vars.animate == True:
@@ -466,12 +477,6 @@ class People(object):
         self.destFlr = random.choice(selection)
 
 
-def assign(person):
-    if person.originFlr not in waiting:
-        waiting[person.originFlr] = []
-    waiting[person.originFlr].append(person)
-
-
 """
 class Floors(object):
     def __init__(self, peopleWaiting, floorId):
@@ -521,10 +526,13 @@ if __name__ == "__main__":
         # floorsList = []
         numFloors = vars.numFloors
         numPeople = vars.numPeople
+        for i in range(numFloors):
+            waiting[i] = []
+            delivered[i] = []
 
         for id in range(0, numPeople):
             person = (People(numFloors - 1, id))
-            assign(person)
+            waiting[person.originFlr].append(person)
         print(waiting)
         # print(peopleWaiting)
 
